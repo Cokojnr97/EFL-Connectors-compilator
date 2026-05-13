@@ -14,11 +14,17 @@ export const UI_COPY: Record<Locale, {
   fontSize: string;
   motion: string;
   language: string;
-  mode: string;
+  viewMode: string;
   accent: string;
   summaryPrefix: string;
   loading: string;
   activeFilters: string;
+  eligibleWords: string;
+  cascade: string;
+  table: string;
+  learn: string;
+  learnSubtitle: string;
+  categoryExplanations: string;
 }> = {
   en: {
     appTitle: 'English Connectors',
@@ -34,11 +40,17 @@ export const UI_COPY: Record<Locale, {
     fontSize: 'Font size',
     motion: 'Animation speed',
     language: 'Language',
-    mode: 'Mode',
+    viewMode: 'View mode',
     accent: 'Accent',
-    summaryPrefix: 'showing',
+    summaryPrefix: 'Showing',
     loading: 'Loading connectors...',
     activeFilters: 'active filters',
+    eligibleWords: 'eligible words',
+    cascade: 'Cascade',
+    table: 'Table',
+    learn: 'Learn',
+    learnSubtitle: 'Understand connector categories and classifications',
+    categoryExplanations: 'Category explanations',
   },
   es: {
     appTitle: 'Conectores en inglés',
@@ -54,11 +66,17 @@ export const UI_COPY: Record<Locale, {
     fontSize: 'Tamaño de fuente',
     motion: 'Velocidad de animación',
     language: 'Idioma',
-    mode: 'Modo',
+    viewMode: 'Modo de vista',
     accent: 'Acento',
-    summaryPrefix: 'mostrando',
+    summaryPrefix: 'Mostrando',
     loading: 'Cargando conectores...',
     activeFilters: 'filtros activos',
+    eligibleWords: 'palabras elegibles',
+    cascade: 'Cascada',
+    table: 'Tabla',
+    learn: 'Aprender',
+    learnSubtitle: 'Comprende las categorías de conectores y clasificaciones',
+    categoryExplanations: 'Explicaciones de categorías',
   },
 };
 
@@ -84,5 +102,9 @@ export const SELECT_OPTIONS = {
   locale: [
     { value: 'en', label: { en: 'English', es: 'Inglés' } },
     { value: 'es', label: { en: 'Spanish', es: 'Español' } },
+  ],
+  viewMode: [
+    { value: 'cascade', label: { en: 'Cascade', es: 'Cascada' } },
+    { value: 'table', label: { en: 'Table', es: 'Tabla' } },
   ],
 } as const;

@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { CATEGORY_GROUPS, CATEGORY_SEQUENCE } from '../data/categories.js';
+import { CONNECTORS } from '../data/connectors.js';
 import type { CategorySelection, ConnectorRecord, Locale } from '../data/types.js';
 import CategorySelector from './components/CategorySelector';
+import CategoryExplanations from './components/CategoryExplanations';
 import ConnectorCard from './components/ConnectorCard';
 import MenuPanel from './components/MenuPanel';
 import { UI_COPY } from './lib/i18n';
@@ -11,6 +13,7 @@ type ThemeMode = 'light' | 'dark';
 type TonePreset = 'rose' | 'peach' | 'cocoa';
 type FontScale = '100%' | '112.5%' | '125%';
 type MotionMode = 'normal' | 'reduced';
+type ViewMode = 'cascade' | 'table';
 
 const DEFAULT_SETTINGS = {
   theme: 'light' as ThemeMode,
@@ -18,6 +21,7 @@ const DEFAULT_SETTINGS = {
   fontSize: '100%' as FontScale,
   motion: 'normal' as MotionMode,
   locale: 'en' as Locale,
+  viewMode: 'cascade' as ViewMode,
 };
 
 const TONE_MAP: Record<TonePreset, Record<ThemeMode, {
@@ -146,6 +150,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  const [showEducational, setShowEducational] = useState(false);
 
   useEffect(() => {
     document.documentElement.style.fontSize = settings.fontSize;
@@ -186,9 +191,19 @@ export default function App() {
   const shellStyle = {
     ...getThemeVars(settings.theme, settings.tone),
   } as CSSProperties;
+}
 
-  return (
-    <div className="app-shell" data-motion={settings.motion} data-theme={settings.theme} style={shellStyle}>
+function countEligibleConnectors(selection: CategorySelection): number {
+  return CONNECTORS.filter((connector) => {
+    return CATEGORY_SEQUENCE.every((axis) => {
+      const selected = selection[axis];
+      if (!selected || selected.length === 0) return true;
+      return selected.some((value) => connector.categories[axis].includes(value));
+    });
+  }).length;
+}
+
+export default function App() {
       <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
         <header className="glass-panel fade-card flex flex-col gap-4 p-5 lg:p-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">

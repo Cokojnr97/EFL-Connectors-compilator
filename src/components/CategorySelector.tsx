@@ -5,6 +5,7 @@ interface CategorySelectorProps {
   locale: Locale;
   motion: 'normal' | 'reduced';
   selection: CategorySelection;
+  eligibleConnectors: number;
   onChange: (next: CategorySelection) => void;
   onClear: () => void;
 }
@@ -19,7 +20,11 @@ function toggleSelection(selection: CategorySelection, axis: keyof CategorySelec
   };
 }
 
-export default function CategorySelector({ locale, selection, onChange, onClear, motion }: CategorySelectorProps) {
+export default function CategorySelector({ locale, selection, eligibleConnectors, onChange, onClear, motion }: CategorySelectorProps) {
+  const bannerText = locale === 'en' 
+    ? `${eligibleConnectors} eligible ${eligibleConnectors === 1 ? 'word' : 'words'}`
+    : `${eligibleConnectors} ${eligibleConnectors === 1 ? 'palabra' : 'palabras'} elegible${eligibleConnectors === 1 ? '' : 's'}`;
+
   return (
     <section className="glass-panel rounded-[28px] p-4 sm:p-5">
       <div className="mb-4 flex items-start justify-between gap-4">
@@ -31,6 +36,12 @@ export default function CategorySelector({ locale, selection, onChange, onClear,
           {locale === 'en' ? 'Reset' : 'Reiniciar'}
         </button>
       </div>
+
+      {Object.values(selection).some((v) => v.length > 0) && (
+        <div className="mb-4 rounded-lg border border-[color:var(--accent-soft)] bg-[color:var(--accent-soft)] bg-opacity-20 px-4 py-3">
+          <p className="text-sm font-medium text-[color:var(--accent)]">{bannerText}</p>
+        </div>
+      )}
 
       <div className="space-y-4">
         {CATEGORY_SEQUENCE.map((axis, index) => {
