@@ -1,0 +1,201 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Aptos', 'Trebuchet MS', 'Segoe UI', sans-serif;
+    background: #f8e9e4;
+    color: #4d232d;
+  }
+
+  button,
+  select {
+    font: inherit;
+  }
+}
+
+@layer components {
+  .app-shell {
+    min-height: 100vh;
+    background: var(--page-bg);
+    color: var(--panel-text);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .app-shell::before,
+  .app-shell::after {
+    content: '';
+    position: fixed;
+    inset: auto;
+    border-radius: 9999px;
+    pointer-events: none;
+    filter: blur(48px);
+    opacity: 0.4;
+  }
+
+  .app-shell::before {
+    width: 20rem;
+    height: 20rem;
+    top: -6rem;
+    right: -4rem;
+    background: color-mix(in srgb, var(--accent) 28%, transparent);
+  }
+
+  .app-shell::after {
+    width: 18rem;
+    height: 18rem;
+    bottom: -6rem;
+    left: -5rem;
+    background: color-mix(in srgb, var(--accent-soft) 60%, transparent);
+  }
+
+  .glass-panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    box-shadow: var(--panel-shadow);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .fade-card {
+    animation: float-in 520ms ease both;
+  }
+
+  .eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--panel-muted);
+  }
+
+  .pill-button,
+  .chip-button,
+  .menu-field select {
+    transition:
+      transform 180ms ease,
+      background-color 180ms ease,
+      border-color 180ms ease,
+      color 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  .pill-button {
+    border-radius: 9999px;
+    border: 1px solid var(--panel-border);
+    background: var(--panel-strong);
+    color: var(--panel-text);
+    padding: 0.65rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .pill-button:hover,
+  .chip-button:hover,
+  .menu-field select:hover {
+    transform: translateY(-1px);
+  }
+
+  .chip-button {
+    border-radius: 9999px;
+    border: 1px solid var(--panel-border);
+    background: color-mix(in srgb, var(--panel-strong) 88%, white);
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
+    color: var(--panel-text);
+  }
+
+  .chip-button[data-active='true'] {
+    background: color-mix(in srgb, var(--accent-soft) 55%, var(--panel-strong));
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--panel-border));
+    color: var(--accent);
+    box-shadow: 0 10px 25px color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+
+  .menu-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--panel-muted);
+  }
+
+  .menu-field select {
+    border-radius: 1rem;
+    border: 1px solid var(--panel-border);
+    background: var(--panel-strong);
+    color: var(--panel-text);
+    padding: 0.8rem 0.95rem;
+  }
+
+  .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    border: 1px solid var(--panel-border);
+    background: color-mix(in srgb, var(--panel-strong) 90%, white);
+    padding: 0.45rem 0.75rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--panel-muted);
+  }
+
+  .highlight-connector {
+    border-radius: 0.4rem;
+    padding: 0 0.16rem;
+    font-weight: 700;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent-soft) 45%, transparent);
+  }
+
+  .highlight-punctuation {
+    border-radius: 0.35rem;
+    padding: 0 0.16rem;
+    font-weight: 800;
+    color: #d13c4b;
+    background: color-mix(in srgb, #ffd7de 65%, transparent);
+  }
+
+  .highlight-support {
+    border-radius: 0.4rem;
+    padding: 0 0.16rem;
+    font-weight: 700;
+    color: color-mix(in srgb, var(--accent) 72%, #6d3051);
+    background: color-mix(in srgb, var(--accent-soft) 30%, transparent);
+  }
+}
+
+@keyframes float-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+[data-motion='reduced'] *,
+[data-motion='reduced'] *::before,
+[data-motion='reduced'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
