@@ -144,6 +144,18 @@ function getThemeVars(theme: ThemeMode, tone: TonePreset): CSSProperties {
   } as CSSProperties;
 }
 
+function countEligibleConnectors(selection: CategorySelection): number {
+  return CONNECTORS.filter((connector) => {
+    return CATEGORY_SEQUENCE.every((axis) => {
+      const selected = selection[axis];
+      if (selected.length === 0) {
+        return true;
+      }
+      return selected.some((value) => connector.categories[axis].includes(value));
+    });
+  }).length;
+}
+
 export default function App() {
   const [selection, setSelection] = useState<CategorySelection>(createEmptySelection());
   const [connectors, setConnectors] = useState<ConnectorRecord[]>([]);
@@ -187,38 +199,49 @@ export default function App() {
 
   const copy = UI_COPY[settings.locale];
   const activeCount = Object.values(selection).reduce((count, values) => count + values.length, 0);
-
   const shellStyle = {
     ...getThemeVars(settings.theme, settings.tone),
   } as CSSProperties;
-}
 
-function countEligibleConnectors(selection: CategorySelection): number {
-  return CONNECTORS.filter((connector) => {
-    return CATEGORY_SEQUENCE.every((axis) => {
-      const selected = selection[axis];
-      if (!selected || selected.length === 0) return true;
-      return selected.some((value) => connector.categories[axis].includes(value));
-    });
-  }).length;
-}
+  const eligibleConnectors = countEligibleConnectors(selection);
 
-export default function App() {
-      <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
-        <header className="glass-panel fade-card flex flex-col gap-4 p-5 lg:p-6">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <div className="max-w-3xl">
-              <p className="eyebrow">{copy.appTitle}</p>
-              <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">{copy.appTitle}</h1>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-[color:var(--panel-muted)] sm:text-base">{copy.appSubtitle}</p>
-            </div>
+  return (
+    <div style={shellStyle} className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
+      <header className="glass-panel fade-card flex flex-col gap-4 p-5 lg:p-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div className="max-w-3xl">
+            <p className="eyebrow">{copy.appTitle}</p>
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">{copy.appTitle}</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-[color:var(--panel-muted)] sm:text-base">{copy.appSubtitle}</p>
+          </div>
+          <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
             <div className="glass-panel inline-flex rounded-2xl px-4 py-3 text-sm text-[color:var(--panel-muted)]">
               <span className="font-semibold text-[color:var(--panel-text)]">{activeCount}</span>&nbsp;{copy.activeFilters}
             </div>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setShowEducational(true)}
+                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${showEducational ? 'bg-[color:var(--accent)] text-white' : 'border border-[color:var(--panel-border)] bg-[color:var(--panel-bg)] text-[color:var(--panel-text)]'}`}
+              >
+                {copy.learn}
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowEducational(false)}
+                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${!showEducational ? 'bg-[color:var(--accent)] text-white' : 'border border-[color:var(--panel-border)] bg-[color:var(--panel-bg)] text-[color:var(--panel-text)]'}`}
+              >
+                {copy.explore}
+              </button>
+            </div>
           </div>
-          <MenuPanel settings={settings} locale={settings.locale} onChange={setSettings} />
-        </header>
+        </div>
+        <MenuPanel settings={settings} locale={settings.locale} onChange={setSettings} />
+      </header>
 
+      {showEducational ? (
+        <CategoryExplanations />
+      ) : (
         <main className="grid gap-6 lg:grid-cols-[minmax(320px,420px)_1fr]">
           <aside className="fade-card lg:sticky lg:top-6 lg:self-start">
             <CategorySelector
@@ -227,6 +250,7 @@ export default function App() {
               selection={selection}
               onChange={setSelection}
               onClear={() => setSelection(createEmptySelection())}
+              eligibleConnectors={eligibleConnectors}
             />
           </aside>
 
@@ -271,6 +295,31 @@ export default function App() {
               <div className="glass-panel fade-card p-6 text-sm text-red-700">{error}</div>
             ) : connectors.length === 0 ? (
               <div className="glass-panel fade-card p-6 text-sm text-[color:var(--panel-muted)]">{copy.noMatches}</div>
+            ) : settings.viewMode === 'table' ? (
+              <div className="glass-panel fade-card overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="border-b border-[color:var(--panel-border)]">
+                    <tr>
+                      <th className="px-4 py-3 text-left font-semibold text-[color:var(--panel-text)]">{copy.connectorColumn}</th>
+                      <th className="px-4 py-3 text-left font-semibold text-[color:var(--panel-text)]">{copy.functionColumn}</th>
+                      <th className="px-4 py-3 text-left font-semibold text-[color:var(--panel-text)]">{copy.grammarColumn}</th>
+                      <th className="px-4 py-3 text-left font-semibold text-[color:var(--panel-text)]">{copy.registerColumn}</th>
+                      <th className="px-4 py-3 text-left font-semibold text-[color:var(--panel-text)]">{copy.cefrColumn}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {connectors.map((connector) => (
+                      <tr key={connector.id} className="border-b border-[color:var(--panel-border)] transition-colors hover:bg-[color:var(--accent-soft)] hover:bg-opacity-20">
+                        <td className="px-4 py-3 font-medium text-[color:var(--panel-text)]">{connector.connector}</td>
+                        <td className="px-4 py-3 text-[color:var(--panel-muted)]">{connector.categories.function.join(', ')}</td>
+                        <td className="px-4 py-3 text-[color:var(--panel-muted)]">{connector.categories.grammar.join(', ')}</td>
+                        <td className="px-4 py-3 text-[color:var(--panel-muted)]">{connector.categories.register.join(', ')}</td>
+                        <td className="px-4 py-3 text-[color:var(--panel-muted)]">{connector.categories.cefr.join(', ')}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             ) : (
               <div className="grid gap-4">
                 {connectors.map((connector, index) => (
@@ -286,7 +335,7 @@ export default function App() {
             )}
           </section>
         </main>
-      </div>
+      )}
     </div>
   );
 }

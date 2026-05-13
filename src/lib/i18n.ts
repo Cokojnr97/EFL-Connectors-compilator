@@ -23,8 +23,14 @@ export const UI_COPY: Record<Locale, {
   cascade: string;
   table: string;
   learn: string;
+  explore: string;
   learnSubtitle: string;
   categoryExplanations: string;
+  connectorColumn: string;
+  functionColumn: string;
+  grammarColumn: string;
+  registerColumn: string;
+  cefrColumn: string;
 }> = {
   en: {
     appTitle: 'English Connectors',
@@ -49,8 +55,14 @@ export const UI_COPY: Record<Locale, {
     cascade: 'Cascade',
     table: 'Table',
     learn: 'Learn',
+    explore: 'Explore',
     learnSubtitle: 'Understand connector categories and classifications',
     categoryExplanations: 'Category explanations',
+    connectorColumn: 'Connector',
+    functionColumn: 'Function',
+    grammarColumn: 'Grammar',
+    registerColumn: 'Register',
+    cefrColumn: 'CEFR',
   },
   es: {
     appTitle: 'Conectores en inglés',
@@ -75,8 +87,14 @@ export const UI_COPY: Record<Locale, {
     cascade: 'Cascada',
     table: 'Tabla',
     learn: 'Aprender',
+    explore: 'Explorar',
     learnSubtitle: 'Comprende las categorías de conectores y clasificaciones',
     categoryExplanations: 'Explicaciones de categorías',
+    connectorColumn: 'Conector',
+    functionColumn: 'Función',
+    grammarColumn: 'Gramática',
+    registerColumn: 'Registro',
+    cefrColumn: 'CEFR',
   },
 };
 
