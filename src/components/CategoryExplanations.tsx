@@ -250,8 +250,8 @@ export default function CategoryExplanations({ locale, motion }: CategoryExplana
               style={{ animationDelay: motion === 'reduced' ? '0ms' : `${index * 45}ms` }}
             >
               <div className="mb-3">
-                <h3 className="text-base font-semibold capitalize">{group.label[locale]}</h3>
-                <div className="mt-2 text-sm leading-6 text-[color:var(--panel-text)]">{explanation[locale]}</div>
+                <h3 className="text-base font-semibold capitalize">{group.label[locale] || group.axis}</h3>
+                <div className="mt-2 text-sm leading-6 text-[color:var(--panel-text)]">{explanation[locale] ?? (locale === 'en' ? <p>No explanation available.</p> : <p>No hay explicación disponible.</p>)}</div>
               </div>
 
               <div className="mt-4 space-y-2">
