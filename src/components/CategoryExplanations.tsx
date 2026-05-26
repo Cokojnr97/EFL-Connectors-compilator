@@ -251,7 +251,7 @@ export default function CategoryExplanations({ locale, motion }: CategoryExplana
             >
               <div className="mb-3">
                 <h3 className="text-base font-semibold capitalize">{group.label[locale]}</h3>
-                <div className="mt-2 text-sm leading-6 text-[color:var(--panel-muted)]">{explanation[locale]}</div>
+                <div className="mt-2 text-sm leading-6 text-[color:var(--panel-text)]">{explanation[locale]}</div>
               </div>
 
               <div className="mt-4 space-y-2">
