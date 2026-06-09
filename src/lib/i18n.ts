@@ -20,6 +20,17 @@ export const UI_COPY: Record<Locale, {
   loading: string;
   activeFilters: string;
   eligibleWords: string;
+  practice: string;
+  practiceSubtitle: string;
+  practiceInstructions: string;
+  connectorDrills: string;
+  punctuationDrills: string;
+  advancedParagraphDrills: string;
+  nextSet: string;
+  resetCard: string;
+  correctAnswer: string;
+  tryAgain: string;
+  showAnswer: string;
   cascade: string;
   table: string;
   learn: string;
@@ -34,7 +45,7 @@ export const UI_COPY: Record<Locale, {
 }> = {
   en: {
     appTitle: 'English Connectors',
-    appSubtitle: 'Explore connectors by meaning, grammar, punctuation, register, and use.',
+    appSubtitle: 'Explore connectors by meaning, grammar, punctuation, register, use, and practice drills.',
     connectorResults: 'Matching connectors',
     noMatches: 'No connectors match those filters yet.',
     clearFilters: 'Clear filters',
@@ -52,6 +63,17 @@ export const UI_COPY: Record<Locale, {
     loading: 'Loading connectors...',
     activeFilters: 'active filters',
     eligibleWords: 'eligible words',
+    practice: 'Practice',
+    practiceSubtitle: 'Review connectors and punctuation with drag-and-drop fill-in exercises.',
+    practiceInstructions: 'Drag a chip into each blank, then check your answer. Use Next set to keep cycling through the deck.',
+    connectorDrills: 'Connector drills',
+    punctuationDrills: 'Punctuation drills',
+    advancedParagraphDrills: 'Advanced paragraph drills (50 sets)',
+    nextSet: 'Next set',
+    resetCard: 'Reset card',
+    correctAnswer: 'Correct answer',
+    tryAgain: 'Try again',
+    showAnswer: 'Show answer',
     cascade: 'Cascade',
     table: 'Table',
     learn: 'Learn',
@@ -66,7 +88,7 @@ export const UI_COPY: Record<Locale, {
   },
   es: {
     appTitle: 'Conectores en inglés',
-    appSubtitle: 'Explora conectores por significado, gramática, puntuación, registro y uso.',
+    appSubtitle: 'Explora conectores por significado, gramática, puntuación, registro, uso y ejercicios de práctica.',
     connectorResults: 'Conectores que coinciden',
     noMatches: 'Todavía no hay conectores con esos filtros.',
     clearFilters: 'Borrar filtros',
@@ -84,6 +106,17 @@ export const UI_COPY: Record<Locale, {
     loading: 'Cargando conectores...',
     activeFilters: 'filtros activos',
     eligibleWords: 'palabras elegibles',
+    practice: 'Práctica',
+    practiceSubtitle: 'Repasa conectores y puntuación con ejercicios de arrastrar y completar.',
+    practiceInstructions: 'Arrastra una ficha hasta cada espacio y comprueba tu respuesta. Usa el siguiente conjunto para seguir avanzando por la lista.',
+    connectorDrills: 'Ejercicios de conectores',
+    punctuationDrills: 'Ejercicios de puntuación',
+    advancedParagraphDrills: 'Ejercicios avanzados de párrafo (50 conjuntos)',
+    nextSet: 'Siguiente conjunto',
+    resetCard: 'Reiniciar tarjeta',
+    correctAnswer: 'Respuesta correcta',
+    tryAgain: 'Inténtalo otra vez',
+    showAnswer: 'Mostrar respuesta',
     cascade: 'Cascada',
     table: 'Tabla',
     learn: 'Aprender',
@@ -107,6 +140,7 @@ export const SELECT_OPTIONS = {
     { value: 'rose', label: { en: 'Soft rose', es: 'Rosa suave' } },
     { value: 'peach', label: { en: 'Peach cream', es: 'Crema melocotón' } },
     { value: 'cocoa', label: { en: 'Cocoa blush', es: 'Rubor cacao' } },
+    { value: 'aqua', label: { en: 'Light blue', es: 'Azul claro' } },
   ],
   fontSize: [
     { value: '100%', label: { en: 'Normal', es: 'Normal' } },

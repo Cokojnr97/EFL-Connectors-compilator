@@ -23,6 +23,11 @@ function createEmptySelection(): CategorySelection {
     frequency: [],
     rhetorical: [],
     origin: [],
+    opinion: [],
+    sequence: [],
+    comparison: [],
+    summary: [],
+    place: [],
   };
 }
 

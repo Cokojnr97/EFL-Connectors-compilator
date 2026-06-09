@@ -5,6 +5,8 @@ A responsive learning app for categorizing English connectors with a React + Tai
 ## What it does
 
 - Filters connectors by multiple category axes.
+- Includes teaching axes for function, grammar, punctuation, CEFR, register, position, structure, frequency, rhetorical function, origin, opinion, sequence, comparison, summary, and place.
+- Switches between Learn, Practice, and Explore views from the main header.
 - Explains why each connector belongs to the selected categories.
 - Shows at least four example sentences per connector.
 - Highlights punctuation, connector words, and sentence position cues.
@@ -27,6 +29,16 @@ npm run build
 npm run start
 ```
 
+## GitHub Pages
+
+This app can be deployed as a static site on GitHub Pages. The frontend falls back to local connector data if the Express API is not available, so the learning, practice, and explore views still work on Pages.
+
+To publish with GitHub Pages:
+
+1. Push the repository to GitHub.
+2. In the repository settings, enable GitHub Pages from GitHub Actions.
+3. Trigger the `Deploy to GitHub Pages` workflow in `.github/workflows/deploy-pages.yml`.
+
 ## API
 
 - `GET /connectors`
@@ -39,6 +51,7 @@ npm run start
 - `data/` shared category schema and seeded connector data.
 - `server/` Express API and production asset serving.
 - `src/` React interface and UI components.
+- `.github/workflows/` GitHub Pages deployment workflow.
 
 ## Iteration log
 

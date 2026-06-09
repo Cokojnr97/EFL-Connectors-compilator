@@ -7,7 +7,7 @@ interface CategorySelectorProps {
   selection: CategorySelection;
   eligibleConnectors: number;
   onChange: (next: CategorySelection) => void;
-  onClear: () => void;
+  onClear: () => void | Promise<void>;
 }
 
 function toggleSelection(selection: CategorySelection, axis: keyof CategorySelection, value: string): CategorySelection {
@@ -32,7 +32,7 @@ export default function CategorySelector({ locale, selection, eligibleConnectors
           <p className="eyebrow">Filters</p>
           <h2 className="text-lg font-semibold">{locale === 'en' ? 'Category selection' : 'Selección de categorías'}</h2>
         </div>
-        <button type="button" className="pill-button" onClick={onClear}>
+        <button type="button" className="pill-button" onClick={() => void onClear()}>
           {locale === 'en' ? 'Reset' : 'Reiniciar'}
         </button>
       </div>

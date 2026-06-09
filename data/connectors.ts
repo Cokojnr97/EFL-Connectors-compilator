@@ -1,8 +1,23 @@
-import type { ConnectorRecord } from './types.js';
+import { ADDITIONAL_CONNECTORS } from './additionalConnectors.js';
+import { deriveSupplementalCategories } from './connectorTagging.js';
+import type { ConnectorExample, ConnectorRecord, Locale } from './types.js';
 
-const c = (record: ConnectorRecord) => record;
+type SeedCategorySelection = Pick<
+  ConnectorRecord['categories'],
+  'function' | 'grammar' | 'punctuation' | 'cefr' | 'register' | 'position' | 'structure' | 'frequency' | 'rhetorical' | 'origin'
+>;
 
-export const CONNECTORS: ConnectorRecord[] = [
+export type SeedConnectorRecord = {
+  id: string;
+  connector: string;
+  explanation: Record<Locale, string>;
+  examples: ConnectorExample[];
+  categories: SeedCategorySelection;
+};
+
+const c = (record: SeedConnectorRecord) => record;
+
+const RAW_CONNECTORS: SeedConnectorRecord[] = [
   c({
     id: 'and',
     connector: 'and',
@@ -679,4 +694,358 @@ export const CONNECTORS: ConnectorRecord[] = [
       { en: 'The journey was long, still, they completed it.', es: 'El viaje fue largo, aun así, lo completaron.', highlights: [{ term: 'still', tone: 'connector' }, { term: ',', tone: 'punctuation' }] },
     ],
   }),
+  // ---- Additional connectors imported from StoryLearning and reference images ----
+  c({
+    id: 'since',
+    connector: 'since',
+    explanation: {
+      en: 'Since is used to show cause or to indicate a time from which something started. It often appears in both causal and temporal contexts.',
+      es: 'Since se usa para mostrar causa o indicar el momento desde el que algo empezó. Aparece en contextos causales y temporales.',
+    },
+    categories: {
+      function: ['cause', 'time'],
+      grammar: ['subordinating'],
+      punctuation: ['none'],
+      cefr: ['B1'],
+      register: ['neutral'],
+      position: ['initial', 'medial'],
+      structure: ['single_word'],
+      frequency: ['medium'],
+      rhetorical: ['expository', 'narrative'],
+      origin: ['native'],
+    },
+    examples: [
+      { en: "I've been here since Monday.", es: 'He estado aquí desde el lunes.', highlights: [{ term: 'since', tone: 'connector' }] },
+      { en: 'Since it rained, we stayed inside.', es: 'Como llovió, nos quedamos dentro.', highlights: [{ term: 'Since', tone: 'connector' }] },
+    ],
+  }),
+  c({
+    id: 'consequently',
+    connector: 'consequently',
+    explanation: {
+      en: 'Consequently shows a logical result or consequence; it is formal and common in written arguments.',
+      es: 'Consequently muestra un resultado lógico o consecuencia; es formal y común en textos escritos.',
+    },
+    categories: {
+      function: ['result'],
+      grammar: ['conjunctive_adverbs'],
+      punctuation: ['semicolon', 'comma'],
+      cefr: ['B2'],
+      register: ['formal'],
+      position: ['initial', 'medial'],
+      structure: ['single_word'],
+      frequency: ['medium'],
+      rhetorical: ['argumentation', 'expository'],
+      origin: ['latin_french'],
+    },
+    examples: [
+      { en: 'Traffic was heavy; consequently, I arrived late.', es: 'El tráfico era intenso; en consecuencia, llegué tarde.', highlights: [{ term: 'consequently', tone: 'connector' }, { term: ';', tone: 'punctuation' }] },
+      { en: 'The experiment failed; consequently, the team revised the method.', es: 'El experimento falló; en consecuencia, el equipo revisó el método.', highlights: [{ term: 'consequently', tone: 'connector' }] },
+    ],
+  }),
+  c({
+    id: 'hence',
+    connector: 'hence',
+    explanation: {
+      en: 'Hence indicates a conclusion or result and is somewhat formal; it often replaces "therefore" in concise statements.',
+      es: 'Hence indica una conclusión o resultado y es algo formal; a menudo reemplaza a "therefore" en enunciados concisos.',
+    },
+    categories: {
+      function: ['result', 'conclusion'],
+      grammar: ['conjunctive_adverbs'],
+      punctuation: ['comma', 'semicolon'],
+      cefr: ['C1'],
+      register: ['formal'],
+      position: ['initial', 'medial'],
+      structure: ['single_word'],
+      frequency: ['low'],
+      rhetorical: ['argumentation'],
+      origin: ['latin_french'],
+    },
+    examples: [
+      { en: 'She did not study; hence, she failed the exam.', es: 'No estudió; por lo tanto, suspendió el examen.', highlights: [{ term: 'hence', tone: 'connector' }, { term: ';', tone: 'punctuation' }] },
+      { en: 'The store closed, hence the long lines elsewhere.', es: 'La tienda cerró, por eso las largas colas en otros lugares.', highlights: [{ term: 'hence', tone: 'connector' }] },
+    ],
+  }),
+  c({
+    id: 'owing-to',
+    connector: 'owing to',
+    explanation: {
+      en: 'Owing to is a formal prepositional connector that indicates cause or reason; it frequently appears in written explanations.',
+      es: 'Owing to es un conector preposicional formal que indica causa o razón; aparece con frecuencia en explicaciones escritas.',
+    },
+    categories: {
+      function: ['cause'],
+      grammar: ['prepositional', 'multi_word_phrase'],
+      punctuation: ['comma'],
+      cefr: ['B2'],
+      register: ['formal'],
+      position: ['initial', 'medial'],
+      structure: ['multi_word_phrase'],
+      frequency: ['low'],
+      rhetorical: ['expository'],
+      origin: ['hybrid'],
+    },
+    examples: [
+      { en: 'The match was postponed owing to heavy rain.', es: 'El partido se pospuso debido a la fuerte lluvia.', highlights: [{ term: 'owing to', tone: 'connector' }, { term: ',', tone: 'punctuation' }] },
+    ],
+  }),
+  c({
+    id: 'thanks-to',
+    connector: 'thanks to',
+    explanation: {
+      en: 'Thanks to attributes a positive result to a cause and is commonly used in informal and neutral registers.',
+      es: 'Thanks to atribuye un resultado positivo a una causa y se usa en registros informales y neutrales.',
+    },
+    categories: {
+      function: ['cause', 'result'],
+      grammar: ['prepositional', 'multi_word_phrase'],
+      punctuation: ['none', 'comma'],
+      cefr: ['B1'],
+      register: ['neutral'],
+      position: ['initial', 'medial'],
+      structure: ['multi_word_phrase'],
+      frequency: ['medium'],
+      rhetorical: ['narrative', 'expository'],
+      origin: ['hybrid'],
+    },
+    examples: [
+      { en: 'Thanks to her help, we finished on time.', es: 'Gracias a su ayuda, terminamos a tiempo.', highlights: [{ term: 'Thanks to', tone: 'connector' }, { term: ',', tone: 'punctuation' }] },
+    ],
+  }),
+  c({
+    id: 'due-to',
+    connector: 'due to',
+    explanation: {
+      en: 'Due to expresses cause and is often used in formal registers; it behaves like a prepositional phrase.',
+      es: 'Due to expresa causa y se usa a menudo en registros formales; funciona como una frase preposicional.',
+    },
+    categories: {
+      function: ['cause'],
+      grammar: ['prepositional', 'multi_word_phrase'],
+      punctuation: ['comma'],
+      cefr: ['B2'],
+      register: ['formal'],
+      position: ['initial', 'medial'],
+      structure: ['multi_word_phrase'],
+      frequency: ['medium'],
+      rhetorical: ['expository'],
+      origin: ['hybrid'],
+    },
+    examples: [
+      { en: 'Flights were delayed due to fog.', es: 'Los vuelos se retrasaron debido a la niebla.', highlights: [{ term: 'due to', tone: 'connector' }] },
+    ],
+  }),
+  c({
+    id: 'thus',
+    connector: 'thus',
+    explanation: {
+      en: 'Thus indicates a result or conclusion in a compact, somewhat formal way; it is common in written argument.',
+      es: 'Thus indica un resultado o conclusión de forma compacta y algo formal; es común en textos argumentativos.',
+    },
+    categories: {
+      function: ['result', 'conclusion'],
+      grammar: ['conjunctive_adverbs'],
+      punctuation: ['comma', 'semicolon'],
+      cefr: ['B2'],
+      register: ['formal'],
+      position: ['initial', 'medial'],
+      structure: ['single_word'],
+      frequency: ['medium'],
+      rhetorical: ['argumentation'],
+      origin: ['latin_french'],
+    },
+    examples: [
+      { en: 'The tests passed; thus, we released the update.', es: 'Las pruebas pasaron; por tanto, publicamos la actualización.', highlights: [{ term: 'thus', tone: 'connector' }, { term: ';', tone: 'punctuation' }] },
+    ],
+  }),
+  c({
+    id: 'after-that',
+    connector: 'after that',
+    explanation: {
+      en: 'After that orders events in a sequence; it helps learners move from one step to the next in narratives or instructions.',
+      es: 'After that ordena eventos en una secuencia; ayuda a los alumnos a pasar de un paso al siguiente en narraciones o instrucciones.',
+    },
+    categories: {
+      function: ['sequence', 'time'],
+      grammar: ['multi_word_phrase', 'prepositional'],
+      punctuation: ['comma', 'none'],
+      cefr: ['A2', 'B1'],
+      register: ['neutral'],
+      position: ['initial', 'medial'],
+      structure: ['multi_word_phrase'],
+      frequency: ['medium'],
+      rhetorical: ['narrative', 'expository'],
+      origin: ['hybrid'],
+    },
+    examples: [
+      { en: 'We finished the first chapter. After that, we discussed the themes.', es: 'Terminamos el primer capítulo. Después de eso, discutimos los temas.', highlights: [{ term: 'After that', tone: 'connector' }] },
+      { en: 'Boil for five minutes; after that, reduce the heat.', es: 'Hervir durante cinco minutos; después, reduzca el fuego.', highlights: [{ term: 'after that', tone: 'connector' }, { term: ';', tone: 'punctuation' }] },
+    ],
+  }),
+  c({
+    id: 'next',
+    connector: 'next',
+    explanation: {
+      en: 'Next indicates the following step in a sequence and is useful in instructions and narratives.',
+      es: 'Next indica el paso siguiente en una secuencia y es útil en instrucciones y narraciones.',
+    },
+    categories: {
+      function: ['sequence', 'time'],
+      grammar: ['single_word'],
+      punctuation: ['comma', 'none'],
+      cefr: ['A2'],
+      register: ['neutral'],
+      position: ['initial', 'medial'],
+      structure: ['single_word'],
+      frequency: ['high'],
+      rhetorical: ['narrative', 'expository'],
+      origin: ['native'],
+    },
+    examples: [
+      { en: 'Boil the rice. Next, add the vegetables.', es: 'Hervir el arroz. A continuación, añadir las verduras.', highlights: [{ term: 'Next', tone: 'connector' }] },
+    ],
+  }),
+  c({
+    id: 'then',
+    connector: 'then',
+    explanation: {
+      en: 'Then is a flexible temporal connector showing sequence or consequence; it is high-frequency and common in speech.',
+      es: 'Then es un conector temporal flexible que muestra secuencia o consecuencia; es de alta frecuencia y común en el habla.',
+    },
+    categories: {
+      function: ['time', 'sequence', 'result'],
+      grammar: ['single_word'],
+      punctuation: ['comma', 'none'],
+      cefr: ['A1', 'A2'],
+      register: ['informal', 'neutral'],
+      position: ['initial', 'medial', 'final'],
+      structure: ['single_word'],
+      frequency: ['high'],
+      rhetorical: ['narrative'],
+      origin: ['native'],
+    },
+    examples: [
+      { en: 'I finished work, then I went home.', es: 'Terminé el trabajo y luego me fui a casa.', highlights: [{ term: 'then', tone: 'connector' }, { term: ',', tone: 'punctuation' }] },
+    ],
+  }),
+  c({
+    id: 'afterwards',
+    connector: 'afterwards',
+    explanation: {
+      en: 'Afterwards signals that something happened later; it is common in storytelling and sequences.',
+      es: 'Afterwards indica que algo ocurrió después; es común en narraciones y secuencias.',
+    },
+    categories: {
+      function: ['sequence', 'time'],
+      grammar: ['single_word'],
+      punctuation: ['comma'],
+      cefr: ['A2'],
+      register: ['neutral'],
+      position: ['initial', 'medial'],
+      structure: ['single_word'],
+      frequency: ['medium'],
+      rhetorical: ['narrative'],
+      origin: ['native'],
+    },
+    examples: [
+      { en: 'We had lunch and, afterwards, we went shopping.', es: 'Almorzamos y, después, fuimos de compras.', highlights: [{ term: 'afterwards', tone: 'connector' }, { term: ',', tone: 'punctuation' }] },
+    ],
+  }),
+  c({
+    id: 'subsequently',
+    connector: 'subsequently',
+    explanation: {
+      en: 'Subsequently is a formal sequence marker meaning "after that" and is common in reports or narratives.',
+      es: 'Subsequently es un marcador de secuencia formal que significa "después de eso" y es común en informes o narraciones.',
+    },
+    categories: {
+      function: ['sequence', 'time'],
+      grammar: ['single_word'],
+      punctuation: ['comma', 'semicolon'],
+      cefr: ['B2'],
+      register: ['formal'],
+      position: ['initial', 'medial'],
+      structure: ['single_word'],
+      frequency: ['low'],
+      rhetorical: ['narrative', 'expository'],
+      origin: ['latin_french'],
+    },
+    examples: [
+      { en: 'The committee met and subsequently issued a statement.', es: 'El comité se reunió y posteriormente emitió un comunicado.', highlights: [{ term: 'subsequently', tone: 'connector' }] },
+    ],
+  }),
+  c({
+    id: 'on-account-of',
+    connector: 'on account of',
+    explanation: { en: 'On account of is a formal phrase meaning "because of" and indicates reason.', es: 'On account of es una frase formal que significa "a causa de" e indica la razón.' },
+    categories: { function: ['cause'], grammar: ['prepositional', 'multi_word_phrase'], punctuation: ['comma'], cefr: ['B2'], register: ['formal'], position: ['initial', 'medial'], structure: ['multi_word_phrase'], frequency: ['low'], rhetorical: ['expository'], origin: ['hybrid'] },
+    examples: [ { en: 'Flights were cancelled on account of fog.', es: 'Los vuelos fueron cancelados debido a la niebla.', highlights: [{ term: 'on account of', tone: 'connector' }] } ],
+  }),
+  c({
+    id: 'for-this-reason',
+    connector: 'for this reason',
+    explanation: { en: 'For this reason introduces a conclusion based on the preceding statement.', es: 'For this reason introduce una conclusión basada en la afirmación anterior.' },
+    categories: { function: ['conclusion', 'result'], grammar: ['multi_word_phrase'], punctuation: ['comma'], cefr: ['B2'], register: ['formal'], position: ['initial'], structure: ['multi_word_phrase'], frequency: ['medium'], rhetorical: ['argumentation'], origin: ['hybrid'] },
+    examples: [ { en: 'For this reason, we recommend extra practice.', es: 'Por esta razón, recomendamos práctica extra.', highlights: [{ term: 'For this reason', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ],
+  }),
+  c({ id: 'finally', connector: 'finally', explanation: { en: 'Finally signals the last point or step in a sequence.', es: 'Finally señala el último punto o paso en una secuencia.' }, categories: { function: ['sequence', 'conclusion'], grammar: ['single_word'], punctuation: ['comma'], cefr: ['A2'], register: ['neutral'], position: ['initial', 'final'], structure: ['single_word'], frequency: ['high'], rhetorical: ['narrative'], origin: ['native'] }, examples: [ { en: 'Finally, we reached the top of the hill.', es: 'Finalmente, llegamos a la cima de la colina.', highlights: [{ term: 'Finally', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'last-but-not-least', connector: 'last but not least', explanation: { en: "Last but not least introduces a final point while stressing its importance.", es: 'Last but not least introduce un punto final destacando su importancia.' }, categories: { function: ['sequence', 'emphasis'], grammar: ['multi_word_phrase'], punctuation: ['comma'], cefr: ['B2'], register: ['neutral'], position: ['initial'], structure: ['multi_word_phrase'], frequency: ['medium'], rhetorical: ['narrative', 'persuasive'], origin: ['hybrid'] }, examples: [ { en: 'Last but not least, thank you to our volunteers.', es: 'Por último, gracias a nuestros voluntarios.', highlights: [{ term: 'Last but not least', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'first', connector: 'first', explanation: { en: 'First marks the initial item in a sequence or list.', es: 'First marca el elemento inicial en una secuencia o lista.' }, categories: { function: ['sequence'], grammar: ['single_word'], punctuation: ['comma'], cefr: ['A1'], register: ['neutral'], position: ['initial'], structure: ['single_word'], frequency: ['high'], rhetorical: ['narrative'], origin: ['native'] }, examples: [ { en: 'First, mix the ingredients.', es: 'Primero, mezcle los ingredientes.', highlights: [{ term: 'First', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'second', connector: 'second', explanation: { en: 'Second is used to order the next item in a sequence.', es: 'Second se usa para ordenar el siguiente elemento en una secuencia.' }, categories: { function: ['sequence'], grammar: ['single_word'], punctuation: ['comma'], cefr: ['A2'], register: ['neutral'], position: ['initial'], structure: ['single_word'], frequency: ['medium'], rhetorical: ['narrative'], origin: ['native'] }, examples: [ { en: 'Second, preheat the oven.', es: 'Segundo, precaliente el horno.', highlights: [{ term: 'Second', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'third', connector: 'third', explanation: { en: 'Third continues the ordered list of steps or points.', es: 'Third continúa la lista ordenada de pasos o puntos.' }, categories: { function: ['sequence'], grammar: ['single_word'], punctuation: ['comma'], cefr: ['B1'], register: ['neutral'], position: ['initial'], structure: ['single_word'], frequency: ['medium'], rhetorical: ['narrative'], origin: ['native'] }, examples: [ { en: 'Third, let the mixture rest.', es: 'Tercero, deje reposar la mezcla.', highlights: [{ term: 'Third', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'after', connector: 'after', explanation: { en: 'After places an event later in time and can be used as a subordinating conjunction or preposition.', es: 'After sitúa un evento más tarde en el tiempo y puede usarse como conjunción subordinada o preposición.' }, categories: { function: ['time'], grammar: ['subordinating', 'prepositional'], punctuation: ['comma', 'none'], cefr: ['A1'], register: ['neutral'], position: ['initial', 'medial'], structure: ['single_word'], frequency: ['high'], rhetorical: ['narrative'], origin: ['native'] }, examples: [ { en: 'After school, we went to the park.', es: 'Después del colegio, fuimos al parque.', highlights: [{ term: 'After', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'before', connector: 'before', explanation: { en: 'Before places an event earlier in time; it can start a subordinate clause.', es: 'Before sitúa un evento en un momento anterior; puede iniciar una cláusula subordinada.' }, categories: { function: ['time'], grammar: ['subordinating'], punctuation: ['comma', 'none'], cefr: ['A1'], register: ['neutral'], position: ['initial', 'medial'], structure: ['single_word'], frequency: ['high'], rhetorical: ['narrative'], origin: ['native'] }, examples: [ { en: 'Before you leave, check the windows.', es: 'Antes de irte, revisa las ventanas.', highlights: [{ term: 'Before', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'as', connector: 'as', explanation: { en: 'As can mark reason (because) or time (while); context determines its meaning.', es: 'As puede marcar causa (porque) o tiempo (mientras); el contexto determina su significado.' }, categories: { function: ['cause', 'time'], grammar: ['subordinating'], punctuation: ['comma', 'none'], cefr: ['B1'], register: ['neutral'], position: ['initial', 'medial'], structure: ['single_word'], frequency: ['high'], rhetorical: ['narrative', 'expository'], origin: ['native'] }, examples: [ { en: 'As it was raining, we stayed in.', es: 'Como estaba lloviendo, nos quedamos dentro.', highlights: [{ term: 'As', tone: 'connector' }] } ], }),
+  c({ id: 'as-soon-as', connector: 'as soon as', explanation: { en: 'As soon as shows that one event happens immediately after another.', es: 'As soon as muestra que un evento ocurre inmediatamente después de otro.' }, categories: { function: ['time'], grammar: ['multi_word_phrase'], punctuation: ['comma'], cefr: ['A2'], register: ['neutral'], position: ['initial', 'medial'], structure: ['multi_word_phrase'], frequency: ['high'], rhetorical: ['narrative'], origin: ['hybrid'] }, examples: [ { en: 'Call me as soon as you arrive.', es: 'Llámame en cuanto llegues.', highlights: [{ term: 'as soon as', tone: 'connector' }] } ], }),
+  c({ id: 'once', connector: 'once', explanation: { en: 'Once can mean "when" or "as soon as" and indicates a single point in time.', es: 'Once puede significar "cuando" o "en cuanto" e indica un punto único en el tiempo.' }, categories: { function: ['time'], grammar: ['subordinating'], punctuation: ['comma'], cefr: ['A2'], register: ['neutral'], position: ['initial', 'medial'], structure: ['single_word'], frequency: ['medium'], rhetorical: ['narrative'], origin: ['native'] }, examples: [ { en: 'Once you finish, we will leave.', es: 'Una vez que termines, nos iremos.', highlights: [{ term: 'Once', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'while', connector: 'while', explanation: { en: 'While indicates simultaneous actions or contrast depending on context.', es: 'While indica acciones simultáneas o contraste dependiendo del contexto.' }, categories: { function: ['time', 'contrast'], grammar: ['subordinating'], punctuation: ['comma'], cefr: ['A2'], register: ['neutral'], position: ['initial', 'medial'], structure: ['single_word'], frequency: ['high'], rhetorical: ['narrative'], origin: ['native'] }, examples: [ { en: 'She read while he cooked.', es: 'Ella leyó mientras él cocinaba.', highlights: [{ term: 'while', tone: 'connector' }] } ], }),
+  c({ id: 'until', connector: 'until', explanation: { en: 'Until marks a time up to a certain point and is used with actions that continue until then.', es: 'Until marca un tiempo hasta cierto punto y se usa con acciones que continúan hasta entonces.' }, categories: { function: ['time', 'condition'], grammar: ['subordinating'], punctuation: ['none', 'comma'], cefr: ['A2'], register: ['neutral'], position: ['initial', 'medial'], structure: ['single_word'], frequency: ['medium'], rhetorical: ['narrative'], origin: ['native'] }, examples: [ { en: 'Wait here until I return.', es: 'Espera aquí hasta que vuelva.', highlights: [{ term: 'until', tone: 'connector' }] } ], }),
+  c({ id: 'in-the-meantime', connector: 'in the meantime', explanation: { en: 'In the meantime indicates something happening during a gap or while waiting.', es: 'In the meantime indica algo que ocurre durante una pausa o mientras se espera.' }, categories: { function: ['time'], grammar: ['multi_word_phrase'], punctuation: ['comma'], cefr: ['B1'], register: ['neutral'], position: ['initial', 'medial'], structure: ['multi_word_phrase'], frequency: ['medium'], rhetorical: ['narrative'], origin: ['hybrid'] }, examples: [ { en: 'I will cook. In the meantime, you can set the table.', es: 'Yo cocinaré. Mientras tanto, puedes poner la mesa.', highlights: [{ term: 'In the meantime', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'also', connector: 'also', explanation: { en: 'Also adds another point or idea and is a common addition connector.', es: 'Also añade otro punto o idea y es un conector de adición común.' }, categories: { function: ['addition'], grammar: ['single_word'], punctuation: ['comma', 'none'], cefr: ['A2'], register: ['neutral'], position: ['medial', 'initial'], structure: ['single_word'], frequency: ['high'], rhetorical: ['expository'], origin: ['native'] }, examples: [ { en: 'She also speaks French.', es: 'Ella también habla francés.', highlights: [{ term: 'also', tone: 'connector' }] } ], }),
+  c({ id: 'additionally', connector: 'additionally', explanation: { en: 'Additionally is a formal addition connector that introduces extra information.', es: 'Additionally es un conector formal de adición que introduce información extra.' }, categories: { function: ['addition'], grammar: ['conjunctive_adverbs'], punctuation: ['comma'], cefr: ['B2'], register: ['formal'], position: ['initial', 'medial'], structure: ['single_word'], frequency: ['medium'], rhetorical: ['expository'], origin: ['latin_french'] }, examples: [ { en: 'Additionally, the report includes new data.', es: 'Además, el informe incluye nuevos datos.', highlights: [{ term: 'Additionally', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'too', connector: 'too', explanation: { en: 'Too is a short addition often used at the end of clauses to mean "also".', es: 'Too es una adición corta que se usa a menudo al final de cláusulas para significar "también".' }, categories: { function: ['addition'], grammar: ['single_word'], punctuation: ['final_position', 'comma'], cefr: ['A2'], register: ['informal', 'neutral'], position: ['final'], structure: ['single_word'], frequency: ['high'], rhetorical: ['narrative'], origin: ['native'] }, examples: [ { en: 'I like pizza too.', es: 'También me gusta la pizza.', highlights: [{ term: 'too', tone: 'connector' }] } ], }),
+  c({ id: 'what-is-more', connector: 'what is more', explanation: { en: 'What is more introduces an additional stronger point and is somewhat informal.', es: 'What is more introduce un punto adicional más fuerte y es algo informal.' }, categories: { function: ['addition', 'emphasis'], grammar: ['multi_word_phrase'], punctuation: ['comma'], cefr: ['B2'], register: ['informal', 'neutral'], position: ['initial'], structure: ['multi_word_phrase'], frequency: ['low'], rhetorical: ['persuasive'], origin: ['hybrid'] }, examples: [ { en: 'He finished the task; what is more, he improved the design.', es: 'Terminó la tarea; además, mejoró el diseño.', highlights: [{ term: 'what is more', tone: 'connector' }, { term: ';', tone: 'punctuation' }] } ], }),
+  c({ id: 'likewise', connector: 'likewise', explanation: { en: 'Likewise shows similarity with a previous statement and is used in both formal and informal registers.', es: 'Likewise muestra similitud con la afirmación anterior y se usa en registros formales e informales.' }, categories: { function: ['comparison'], grammar: ['single_word'], punctuation: ['comma'], cefr: ['B2'], register: ['neutral'], position: ['initial', 'medial'], structure: ['single_word'], frequency: ['medium'], rhetorical: ['expository'], origin: ['latin_french'] }, examples: [ { en: 'The first project failed. Likewise, the second had issues.', es: 'El primer proyecto falló. Igualmente, el segundo tuvo problemas.', highlights: [{ term: 'Likewise', tone: 'connector' }] } ], }),
+  c({ id: 'though', connector: 'though', explanation: { en: 'Though is an informal contrast marker similar to although and can appear at the end of a clause.', es: 'Though es un marcador de contraste informal similar a although y puede aparecer al final de una cláusula.' }, categories: { function: ['contrast'], grammar: ['subordinating'], punctuation: ['comma'], cefr: ['B1'], register: ['informal', 'neutral'], position: ['medial', 'final'], structure: ['single_word'], frequency: ['high'], rhetorical: ['narrative'], origin: ['native'] }, examples: [ { en: 'I like it, though.', es: 'Me gusta, sin embargo.', highlights: [{ term: 'though', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'despite', connector: 'despite', explanation: { en: 'Despite introduces contrast and requires a noun phrase (despite the rain).', es: 'Despite introduce contraste y requiere un sintagma nominal (despite the rain).'}, categories: { function: ['contrast'], grammar: ['prepositional'], punctuation: ['none', 'comma'], cefr: ['B1'], register: ['neutral'], position: ['medial', 'initial'], structure: ['single_word'], frequency: ['medium'], rhetorical: ['narrative'], origin: ['native'] }, examples: [ { en: 'Despite the rain, we went out.', es: 'A pesar de la lluvia, salimos.', highlights: [{ term: 'Despite', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'in-spite-of', connector: 'in spite of', explanation: { en: 'In spite of is equivalent to despite and introduces contrast with a noun phrase.', es: 'In spite of equivale a despite e introduce contraste con un sintagma nominal.' }, categories: { function: ['contrast'], grammar: ['prepositional', 'multi_word_phrase'], punctuation: ['comma'], cefr: ['B1'], register: ['neutral'], position: ['initial', 'medial'], structure: ['multi_word_phrase'], frequency: ['medium'], rhetorical: ['narrative'], origin: ['hybrid'] }, examples: [ { en: 'In spite of his age, he runs marathons.', es: 'A pesar de su edad, corre maratones.', highlights: [{ term: 'In spite of', tone: 'connector' }] } ], }),
+  c({ id: 'on-the-contrary', connector: 'on the contrary', explanation: { en: 'On the contrary directly opposes the preceding idea and introduces the opposite view.', es: 'On the contrary se opone directamente a la idea anterior e introduce la visión opuesta.' }, categories: { function: ['contrast'], grammar: ['multi_word_phrase'], punctuation: ['comma'], cefr: ['B2'], register: ['neutral', 'formal'], position: ['initial'], structure: ['multi_word_phrase'], frequency: ['low'], rhetorical: ['argumentation'], origin: ['hybrid'] }, examples: [ { en: 'I thought it was easy; on the contrary, it was very hard.', es: 'Pensé que era fácil; por el contrario, fue muy difícil.', highlights: [{ term: 'on the contrary', tone: 'connector' }] } ], }),
+  c({ id: 'in-contrast', connector: 'in contrast', explanation: { en: 'In contrast compares two ideas and highlights differences.', es: 'In contrast compara dos ideas y destaca diferencias.' }, categories: { function: ['contrast'], grammar: ['prepositional', 'multi_word_phrase'], punctuation: ['comma'], cefr: ['B2'], register: ['formal'], position: ['initial'], structure: ['multi_word_phrase'], frequency: ['medium'], rhetorical: ['expository'], origin: ['hybrid'] }, examples: [ { en: 'Prices rose. In contrast, demand fell.', es: 'Los precios subieron. En contraste, la demanda bajó.', highlights: [{ term: 'in contrast', tone: 'connector' }] } ], }),
+  c({ id: 'yet', connector: 'yet', explanation: { en: 'Yet is a coordinating contrast marker similar to but and often appears in formal lists.', es: 'Yet es un marcador de contraste coordinante similar a but y a menudo aparece en listas formales.' }, categories: { function: ['contrast'], grammar: ['coordinating'], punctuation: ['comma'], cefr: ['B2'], register: ['formal', 'neutral'], position: ['medial'], structure: ['single_word'], frequency: ['medium'], rhetorical: ['argumentation'], origin: ['native'] }, examples: [ { en: 'He is rich, yet unhappy.', es: 'Es rico, pero infeliz.', highlights: [{ term: 'yet', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'nonetheless', connector: 'nonetheless', explanation: { en: 'Nonetheless is a formal contrastive adverb similar to nevertheless.', es: 'Nonetheless es un adverbio contrastivo formal similar a nevertheless.' }, categories: { function: ['contrast'], grammar: ['conjunctive_adverbs'], punctuation: ['comma', 'semicolon'], cefr: ['C1'], register: ['formal'], position: ['initial', 'medial'], structure: ['single_word'], frequency: ['low'], rhetorical: ['argumentation'], origin: ['latin_french'] }, examples: [ { en: 'The idea is risky; nonetheless, it is worth exploring.', es: 'La idea es arriesgada; no obstante, vale la pena explorarla.', highlights: [{ term: 'nonetheless', tone: 'connector' }] } ], }),
+  c({ id: 'even-though', connector: 'even though', explanation: { en: 'Even though introduces a strong contrast and is similar to although.', es: 'Even though introduce un contraste fuerte y es similar a although.' }, categories: { function: ['contrast'], grammar: ['subordinating'], punctuation: ['comma'], cefr: ['B2'], register: ['neutral'], position: ['initial', 'medial'], structure: ['multi_word_phrase'], frequency: ['medium'], rhetorical: ['narrative'], origin: ['hybrid'] }, examples: [ { en: 'Even though he was tired, he finished the work.', es: 'A pesar de que estaba cansado, terminó el trabajo.', highlights: [{ term: 'Even though', tone: 'connector' }] } ], }),
+  c({ id: 'even-if', connector: 'even if', explanation: { en: 'Even if introduces a hypothetical contrast: it shows that something would be true in spite of a condition.', es: 'Even if introduce un contraste hipotético: muestra que algo sería cierto a pesar de una condición.' }, categories: { function: ['condition', 'contrast'], grammar: ['subordinating'], punctuation: ['comma'], cefr: ['B2'], register: ['neutral'], position: ['initial', 'medial'], structure: ['multi_word_phrase'], frequency: ['medium'], rhetorical: ['narrative'], origin: ['hybrid'] }, examples: [ { en: 'Even if it rains, we will go.', es: 'Incluso si llueve, iremos.', highlights: [{ term: 'Even if', tone: 'connector' }] } ], }),
+  c({ id: 'unless', connector: 'unless', explanation: { en: 'Unless introduces the negative condition (if not) and is used in conditional sentences.', es: 'Unless introduce la condición negativa (si no) y se usa en oraciones condicionales.' }, categories: { function: ['condition'], grammar: ['subordinating'], punctuation: ['none', 'comma'], cefr: ['B1'], register: ['neutral'], position: ['initial', 'medial'], structure: ['single_word'], frequency: ['high'], rhetorical: ['narrative'], origin: ['native'] }, examples: [ { en: 'I will go unless it rains.', es: 'Iré a menos que llueva.', highlights: [{ term: 'unless', tone: 'connector' }] } ], }),
+  c({ id: 'provided-that', connector: 'provided that', explanation: { en: 'Provided that sets a condition and is slightly more formal than if.', es: 'Provided that establece una condición y es algo más formal que if.' }, categories: { function: ['condition'], grammar: ['multi_word_phrase', 'subordinating'], punctuation: ['comma'], cefr: ['B2'], register: ['formal'], position: ['initial', 'medial'], structure: ['multi_word_phrase'], frequency: ['low'], rhetorical: ['argumentation'], origin: ['hybrid'] }, examples: [ { en: 'You can go provided that you finish your work.', es: 'Puedes ir siempre que termines tu trabajo.', highlights: [{ term: 'provided that', tone: 'connector' }] } ], }),
+  c({ id: 'as-long-as', connector: 'as long as', explanation: { en: 'As long as means "provided that" or "if", used to set conditions.', es: 'As long as significa "siempre que" o "si", usado para establecer condiciones.' }, categories: { function: ['condition'], grammar: ['multi_word_phrase'], punctuation: ['comma'], cefr: ['B1'], register: ['neutral'], position: ['initial', 'medial'], structure: ['multi_word_phrase'], frequency: ['medium'], rhetorical: ['narrative'], origin: ['hybrid'] }, examples: [ { en: 'You can borrow it as long as you return it tomorrow.', es: 'Puedes prestarlo siempre que lo devuelvas mañana.', highlights: [{ term: 'as long as', tone: 'connector' }] } ], }),
+  c({ id: 'supposing', connector: 'supposing', explanation: { en: 'Supposing introduces an imagined situation, similar to "if".', es: 'Supposing introduce una situación imaginada, similar a "if".' }, categories: { function: ['condition'], grammar: ['subordinating'], punctuation: ['comma'], cefr: ['B2'], register: ['neutral'], position: ['initial'], structure: ['single_word'], frequency: ['low'], rhetorical: ['narrative'], origin: ['native'] }, examples: [ { en: 'Supposing it rains, what will we do?', es: 'Suponiendo que llueva, ¿qué haremos?', highlights: [{ term: 'Supposing', tone: 'connector' }] } ], }),
+  c({ id: 'on-condition-that', connector: 'on condition that', explanation: { en: 'On condition that is a formal conditional phrase equivalent to "provided that".', es: 'On condition that es una frase condicional formal equivalente a "provided that".' }, categories: { function: ['condition'], grammar: ['multi_word_phrase'], punctuation: ['comma'], cefr: ['C1'], register: ['formal'], position: ['initial'], structure: ['multi_word_phrase'], frequency: ['low'], rhetorical: ['argumentation'], origin: ['hybrid'] }, examples: [ { en: 'You may join us on condition that you sign the form.', es: 'Puedes unirte con la condición de que firmes el formulario.', highlights: [{ term: 'on condition that', tone: 'connector' }] } ], }),
+  c({ id: 'such-as', connector: 'such as', explanation: { en: 'Such as introduces examples and is followed by noun phrases.', es: 'Such as introduce ejemplos y va seguido de sintagmas nominales.' }, categories: { function: ['illustration'], grammar: ['multi_word_phrase'], punctuation: ['comma', 'colon'], cefr: ['A2', 'B1'], register: ['neutral'], position: ['medial'], structure: ['multi_word_phrase'], frequency: ['high'], rhetorical: ['expository'], origin: ['hybrid'] }, examples: [ { en: 'Fruits such as apples and bananas are healthy.', es: 'Frutas como manzanas y plátanos son saludables.', highlights: [{ term: 'such as', tone: 'connector' }] } ], }),
+  c({ id: 'like', connector: 'like', explanation: { en: 'Like can introduce examples in informal contexts or show similarity.', es: 'Like puede introducir ejemplos en contextos informales o mostrar similitud.' }, categories: { function: ['illustration', 'comparison'], grammar: ['single_word'], punctuation: ['comma', 'none'], cefr: ['A2'], register: ['informal'], position: ['medial'], structure: ['single_word'], frequency: ['high'], rhetorical: ['narrative'], origin: ['native'] }, examples: [ { en: 'Cities like London attract many tourists.', es: 'Ciudades como Londres atraen a muchos turistas.', highlights: [{ term: 'like', tone: 'connector' }] } ], }),
+  c({ id: 'including', connector: 'including', explanation: { en: 'Including introduces one or more examples as part of a larger set.', es: 'Including introduce uno o más ejemplos como parte de un conjunto mayor.' }, categories: { function: ['illustration'], grammar: ['single_word'], punctuation: ['comma'], cefr: ['B1'], register: ['neutral'], position: ['medial'], structure: ['single_word'], frequency: ['high'], rhetorical: ['expository'], origin: ['latin_french'] }, examples: [ { en: 'Many countries, including Spain, use that system.', es: 'Muchos países, incluyendo España, usan ese sistema.', highlights: [{ term: 'including', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'namely', connector: 'namely', explanation: { en: 'Namely introduces a specific example or clarification of what was just said.', es: 'Namely introduce un ejemplo específico o una aclaración de lo dicho.' }, categories: { function: ['illustration'], grammar: ['single_word'], punctuation: ['comma', 'colon'], cefr: ['B2'], register: ['formal'], position: ['initial', 'medial'], structure: ['single_word'], frequency: ['low'], rhetorical: ['expository'], origin: ['latin_french'] }, examples: [ { en: 'Three students were late, namely John, Ana and Tom.', es: 'Tres estudiantes llegaron tarde, a saber John, Ana y Tom.', highlights: [{ term: 'namely', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'for-instance', connector: 'for instance', explanation: { en: 'For instance is another way to introduce an example, similar to for example.', es: 'For instance es otra forma de introducir un ejemplo, similar a for example.' }, categories: { function: ['illustration'], grammar: ['multi_word_phrase'], punctuation: ['comma'], cefr: ['A2', 'B1'], register: ['neutral'], position: ['initial', 'medial'], structure: ['multi_word_phrase'], frequency: ['high'], rhetorical: ['expository'], origin: ['hybrid'] }, examples: [ { en: 'There are many languages to learn. For instance, Spanish and French are popular.', es: 'Hay muchos idiomas para aprender. Por ejemplo, español y francés son populares.', highlights: [{ term: 'for instance', tone: 'connector' }] } ], }),
+  c({ id: 'compared-to', connector: 'compared to', explanation: { en: 'Compared to shows comparison between two things and highlights differences or similarities.', es: 'Compared to muestra comparación entre dos cosas y destaca diferencias o similitudes.' }, categories: { function: ['comparison'], grammar: ['prepositional'], punctuation: ['comma'], cefr: ['B2'], register: ['neutral'], position: ['initial', 'medial'], structure: ['multi_word_phrase'], frequency: ['medium'], rhetorical: ['expository'], origin: ['hybrid'] }, examples: [ { en: 'Compared to 2019, sales increased.', es: 'Comparado con 2019, las ventas aumentaron.', highlights: [{ term: 'compared to', tone: 'connector' }] } ], }),
+  c({ id: 'similarly', connector: 'similarly', explanation: { en: 'Similarly introduces a comparable idea and helps make parallels between statements.', es: 'Similarly introduce una idea comparable y ayuda a establecer paralelismos entre afirmaciones.' }, categories: { function: ['comparison'], grammar: ['single_word'], punctuation: ['comma'], cefr: ['B2'], register: ['neutral'], position: ['initial', 'medial'], structure: ['single_word'], frequency: ['medium'], rhetorical: ['expository'], origin: ['latin_french'] }, examples: [ { en: 'The north is cold. Similarly, the south sees storms.', es: 'El norte es frío. De igual manera, el sur ve tormentas.', highlights: [{ term: 'Similarly', tone: 'connector' }] } ], }),
+  c({ id: 'all-in-all', connector: 'all in all', explanation: { en: 'All in all summarizes the overall result or impression.', es: 'All in all resume el resultado o impresión general.' }, categories: { function: ['summary', 'conclusion'], grammar: ['multi_word_phrase'], punctuation: ['comma'], cefr: ['B1'], register: ['neutral'], position: ['initial', 'final'], structure: ['multi_word_phrase'], frequency: ['medium'], rhetorical: ['expository'], origin: ['hybrid'] }, examples: [ { en: 'All in all, it was a good year.', es: 'En general, fue un buen año.', highlights: [{ term: 'All in all', tone: 'connector' }] } ], }),
+  c({ id: 'to-conclude', connector: 'to conclude', explanation: { en: 'To conclude signals the end of a text or argument and introduces summary points.', es: 'To conclude señala el final de un texto o argumento e introduce puntos resumidos.' }, categories: { function: ['conclusion'], grammar: ['multi_word_phrase'], punctuation: ['comma', 'colon'], cefr: ['B2'], register: ['formal'], position: ['initial'], structure: ['multi_word_phrase'], frequency: ['medium'], rhetorical: ['argumentation'], origin: ['hybrid'] }, examples: [ { en: 'To conclude, our data supports the claim.', es: 'Para concluir, nuestros datos respaldan la afirmación.', highlights: [{ term: 'To conclude', tone: 'connector' }] } ], }),
+  c({ id: 'on-the-whole', connector: 'on the whole', explanation: { en: 'On the whole gives a general overall statement about a topic.', es: 'On the whole da una declaración general sobre un tema.' }, categories: { function: ['summary'], grammar: ['multi_word_phrase'], punctuation: ['comma'], cefr: ['B2'], register: ['neutral'], position: ['initial'], structure: ['multi_word_phrase'], frequency: ['medium'], rhetorical: ['expository'], origin: ['hybrid'] }, examples: [ { en: 'On the whole, the team performed well.', es: 'En general, el equipo rindió bien.', highlights: [{ term: 'On the whole', tone: 'connector' }] } ], }),
+  c({ id: 'as-a-consequence', connector: 'as a consequence', explanation: { en: 'As a consequence shows the result of a previous action or event.', es: 'As a consequence muestra el resultado de una acción o evento previo.' }, categories: { function: ['result'], grammar: ['multi_word_phrase'], punctuation: ['comma'], cefr: ['B2'], register: ['formal'], position: ['initial'], structure: ['multi_word_phrase'], frequency: ['low'], rhetorical: ['argumentation', 'expository'], origin: ['hybrid'] }, examples: [ { en: 'The road was flooded. As a consequence, the school closed.', es: 'La carretera se inundó. Como consecuencia, la escuela cerró.', highlights: [{ term: 'As a consequence', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'in-addition', connector: 'in addition', explanation: { en: 'In addition introduces another point and is common in formal writing.', es: 'In addition introduce otro punto y es común en la escritura formal.' }, categories: { function: ['addition'], grammar: ['multi_word_phrase'], punctuation: ['comma'], cefr: ['B1', 'B2'], register: ['formal'], position: ['initial'], structure: ['multi_word_phrase'], frequency: ['high'], rhetorical: ['expository'], origin: ['hybrid'] }, examples: [ { en: 'In addition, the plan is affordable.', es: 'Además, el plan es asequible.', highlights: [{ term: 'In addition', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'lastly', connector: 'lastly', explanation: { en: 'Lastly introduces the final item in a list or sequence.', es: 'Lastly introduce el último elemento de una lista o secuencia.' }, categories: { function: ['sequence', 'conclusion'], grammar: ['single_word'], punctuation: ['comma'], cefr: ['A2'], register: ['neutral'], position: ['initial'], structure: ['single_word'], frequency: ['high'], rhetorical: ['narrative'], origin: ['native'] }, examples: [ { en: 'Lastly, check the final answer.', es: 'Por último, revisa la respuesta final.', highlights: [{ term: 'Lastly', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'on-the-one-hand', connector: 'on the one hand', explanation: { en: 'On the one hand introduces one side of a balanced contrast that is usually paired with on the other hand.', es: 'On the one hand introduce un lado de un contraste equilibrado que normalmente se empareja con on the other hand.' }, categories: { function: ['contrast'], grammar: ['multi_word_phrase'], punctuation: ['comma'], cefr: ['B2'], register: ['neutral'], position: ['initial'], structure: ['multi_word_phrase'], frequency: ['medium'], rhetorical: ['argumentation'], origin: ['hybrid'] }, examples: [ { en: 'On the one hand, the job is exciting; on the other hand, it is demanding.', es: 'Por un lado, el trabajo es emocionante; por otro, es exigente.', highlights: [{ term: 'On the one hand', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'despite-the-fact-that', connector: 'despite the fact that', explanation: { en: 'Despite the fact that introduces a contrast and is more explicit than despite.', es: 'Despite the fact that introduce un contraste y es más explícito que despite.' }, categories: { function: ['contrast'], grammar: ['subordinating', 'multi_word_phrase'], punctuation: ['comma'], cefr: ['B2'], register: ['formal'], position: ['initial', 'medial'], structure: ['multi_word_phrase'], frequency: ['low'], rhetorical: ['argumentation'], origin: ['hybrid'] }, examples: [ { en: 'Despite the fact that it was late, they continued working.', es: 'A pesar de que era tarde, siguieron trabajando.', highlights: [{ term: 'despite the fact that', tone: 'connector' }] } ], }),
+  c({ id: 'in-spite-of-the-fact-that', connector: 'in spite of the fact that', explanation: { en: 'In spite of the fact that is a formal contrast phrase used before a clause.', es: 'In spite of the fact that es una frase formal de contraste usada antes de una cláusula.' }, categories: { function: ['contrast'], grammar: ['multi_word_phrase'], punctuation: ['comma'], cefr: ['B2'], register: ['formal'], position: ['initial'], structure: ['multi_word_phrase'], frequency: ['low'], rhetorical: ['argumentation'], origin: ['hybrid'] }, examples: [ { en: 'In spite of the fact that she was tired, she finished the race.', es: 'A pesar de que estaba cansada, terminó la carrera.', highlights: [{ term: 'in spite of the fact that', tone: 'connector' }] } ], }),
+  c({ id: 'unlike', connector: 'unlike', explanation: { en: 'Unlike is used to show a difference between two people or things.', es: 'Unlike se usa para mostrar una diferencia entre dos personas o cosas.' }, categories: { function: ['contrast', 'comparison'], grammar: ['prepositional'], punctuation: ['comma', 'none'], cefr: ['A2', 'B1'], register: ['neutral'], position: ['initial', 'medial'], structure: ['single_word'], frequency: ['high'], rhetorical: ['expository'], origin: ['native'] }, examples: [ { en: 'Unlike his brother, he is very punctual.', es: 'A diferencia de su hermano, él es muy puntual.', highlights: [{ term: 'Unlike', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'by-comparison', connector: 'by comparison', explanation: { en: 'By comparison is used to compare one thing with another and usually highlights a difference.', es: 'By comparison se usa para comparar una cosa con otra y normalmente destaca una diferencia.' }, categories: { function: ['comparison'], grammar: ['multi_word_phrase'], punctuation: ['comma'], cefr: ['B2'], register: ['formal'], position: ['initial'], structure: ['multi_word_phrase'], frequency: ['low'], rhetorical: ['expository'], origin: ['hybrid'] }, examples: [ { en: 'By comparison, this method is simpler.', es: 'En comparación, este método es más simple.', highlights: [{ term: 'By comparison', tone: 'connector' }, { term: ',', tone: 'punctuation' }] } ], }),
+  c({ id: 'as-as', connector: 'as ... as', explanation: { en: 'As ... as is a comparison structure used to show equality or similarity.', es: 'As ... as es una estructura comparativa usada para mostrar igualdad o similitud.' }, categories: { function: ['comparison'], grammar: ['correlative'], punctuation: ['none'], cefr: ['A1', 'A2'], register: ['neutral'], position: ['medial'], structure: ['multi_word_phrase'], frequency: ['high'], rhetorical: ['expository'], origin: ['native'] }, examples: [ { en: 'The tea is as hot as the coffee.', es: 'El té está tan caliente como el café.', highlights: [{ term: 'as ... as', tone: 'support' }] } ], }),
 ];
+
+export const CONNECTORS: ConnectorRecord[] = [...RAW_CONNECTORS, ...ADDITIONAL_CONNECTORS].map((record) => ({
+  ...record,
+  categories: {
+    ...record.categories,
+    ...deriveSupplementalCategories(record.connector),
+  },
+}));

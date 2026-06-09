@@ -4,7 +4,7 @@ import { SELECT_OPTIONS, UI_COPY } from '../lib/i18n';
 
 interface Settings {
   theme: 'light' | 'dark';
-  tone: 'rose' | 'peach' | 'cocoa';
+  tone: 'rose' | 'peach' | 'cocoa' | 'aqua';
   fontSize: '100%' | '112.5%' | '125%';
   motion: 'normal' | 'reduced';
   locale: Locale;

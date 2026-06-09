@@ -7,17 +7,20 @@ import CategorySelector from './components/CategorySelector';
 import CategoryExplanations from './components/CategoryExplanations';
 import ConnectorCard from './components/ConnectorCard';
 import MenuPanel from './components/MenuPanel';
+import PracticeSection from './components/PracticeSection';
 import { UI_COPY } from './lib/i18n';
+import { confirmClearFilters, showFiltersCleared } from './lib/alerts';
 
 type ThemeMode = 'light' | 'dark';
-type TonePreset = 'rose' | 'peach' | 'cocoa';
+type TonePreset = 'rose' | 'peach' | 'cocoa' | 'aqua';
 type FontScale = '100%' | '112.5%' | '125%';
 type MotionMode = 'normal' | 'reduced';
 type ViewMode = 'cascade' | 'table';
+type PanelMode = 'explore' | 'learn' | 'practice';
 
 const DEFAULT_SETTINGS = {
-  theme: 'light' as ThemeMode,
-  tone: 'rose' as TonePreset,
+  theme: 'dark' as ThemeMode,
+  tone: 'aqua' as TonePreset,
   fontSize: '100%' as FontScale,
   motion: 'normal' as MotionMode,
   locale: 'en' as Locale,
@@ -107,6 +110,30 @@ const TONE_MAP: Record<TonePreset, Record<ThemeMode, {
       shadow: '0 24px 90px rgba(0, 0, 0, 0.36)',
     },
   },
+  aqua: {
+    light: {
+      page: 'linear-gradient(145deg, #f6fbff 0%, #e8f6ff 40%, #f2fbff 100%)',
+      panel: 'rgba(255, 255, 255, 0.84)',
+      panelStrong: 'rgba(245, 253, 255, 0.96)',
+      border: 'rgba(87, 171, 221, 0.14)',
+      text: '#053049',
+      muted: '#5b7d8f',
+      accent: '#2fa6e0',
+      accentSoft: '#cdeffb',
+      shadow: '0 24px 80px rgba(45, 88, 110, 0.08)',
+    },
+    dark: {
+      page: 'linear-gradient(145deg, #071523 0%, #052034 50%, #04101a 100%)',
+      panel: 'rgba(8, 20, 30, 0.78)',
+      panelStrong: 'rgba(12, 26, 36, 0.92)',
+      border: 'rgba(75, 168, 220, 0.12)',
+      text: '#e6f9ff',
+      muted: '#98c5da',
+      accent: '#34b4f0',
+      accentSoft: '#08364a',
+      shadow: '0 24px 90px rgba(0, 0, 0, 0.48)',
+    },
+  },
 } as const;
 
 function createEmptySelection(): CategorySelection {
@@ -121,6 +148,11 @@ function createEmptySelection(): CategorySelection {
     frequency: [],
     rhetorical: [],
     origin: [],
+    opinion: [],
+    sequence: [],
+    comparison: [],
+    summary: [],
+    place: [],
   };
 }
 
@@ -162,7 +194,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
-  const [showEducational, setShowEducational] = useState(false);
+  const [activePanel, setActivePanel] = useState<PanelMode>('explore');
 
   useEffect(() => {
     document.documentElement.style.fontSize = settings.fontSize;
@@ -171,12 +203,23 @@ export default function App() {
 
   useEffect(() => {
     const controller = new AbortController();
+    const fallbackConnectors = CONNECTORS.filter((connector) => {
+      return CATEGORY_SEQUENCE.every((axis) => {
+        const selected = selection[axis];
+        if (selected.length === 0) {
+          return true;
+        }
+
+        return selected.some((value) => connector.categories[axis].includes(value));
+      });
+    });
+
     const loadConnectors = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        const response = await fetch(`/connectors?categories=${buildFilterQuery(selection)}`, { signal: controller.signal });
+        const response = await fetch(`./connectors?categories=${buildFilterQuery(selection)}`, { signal: controller.signal });
         if (!response.ok) {
           throw new Error(`Request failed with status ${response.status}`);
         }
@@ -185,7 +228,7 @@ export default function App() {
         setConnectors(payload.connectors);
       } catch (loadError) {
         if ((loadError as Error).name !== 'AbortError') {
-          setError(loadError instanceof Error ? loadError.message : 'Unknown error');
+          setConnectors(fallbackConnectors);
         }
       } finally {
         setLoading(false);
@@ -199,6 +242,22 @@ export default function App() {
 
   const copy = UI_COPY[settings.locale];
   const activeCount = Object.values(selection).reduce((count, values) => count + values.length, 0);
+  const clearSelection = () => setSelection(createEmptySelection());
+
+  const handleClearFilters = async () => {
+    if (activeCount === 0) {
+      return;
+    }
+
+    const confirmed = await confirmClearFilters(settings.locale, activeCount);
+    if (!confirmed) {
+      return;
+    }
+
+    clearSelection();
+    void showFiltersCleared(settings.locale);
+  };
+
   const shellStyle = {
     ...getThemeVars(settings.theme, settings.tone),
   } as CSSProperties;
@@ -206,7 +265,7 @@ export default function App() {
   const eligibleConnectors = countEligibleConnectors(selection);
 
   return (
-    <div style={shellStyle} className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
+    <div style={shellStyle} className="app-shell mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
       <header className="glass-panel fade-card flex flex-col gap-4 p-5 lg:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-3xl">
@@ -221,15 +280,22 @@ export default function App() {
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => setShowEducational(true)}
-                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${showEducational ? 'bg-[color:var(--accent)] text-white' : 'border border-[color:var(--panel-border)] bg-[color:var(--panel-bg)] text-[color:var(--panel-text)]'}`}
+                onClick={() => setActivePanel('learn')}
+                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${activePanel === 'learn' ? 'bg-[color:var(--accent)] text-white' : 'border border-[color:var(--panel-border)] bg-[color:var(--panel-bg)] text-[color:var(--panel-text)]'}`}
               >
                 {copy.learn}
               </button>
               <button
                 type="button"
-                onClick={() => setShowEducational(false)}
-                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${!showEducational ? 'bg-[color:var(--accent)] text-white' : 'border border-[color:var(--panel-border)] bg-[color:var(--panel-bg)] text-[color:var(--panel-text)]'}`}
+                onClick={() => setActivePanel('practice')}
+                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${activePanel === 'practice' ? 'bg-[color:var(--accent)] text-white' : 'border border-[color:var(--panel-border)] bg-[color:var(--panel-bg)] text-[color:var(--panel-text)]'}`}
+              >
+                {copy.practice}
+              </button>
+              <button
+                type="button"
+                onClick={() => setActivePanel('explore')}
+                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${activePanel === 'explore' ? 'bg-[color:var(--accent)] text-white' : 'border border-[color:var(--panel-border)] bg-[color:var(--panel-bg)] text-[color:var(--panel-text)]'}`}
               >
                 {copy.explore}
               </button>
@@ -239,8 +305,10 @@ export default function App() {
         <MenuPanel settings={settings} locale={settings.locale} onChange={setSettings} />
       </header>
 
-      {showEducational ? (
-        <CategoryExplanations />
+      {activePanel === 'learn' ? (
+        <CategoryExplanations locale={settings.locale} motion={settings.motion} />
+      ) : activePanel === 'practice' ? (
+        <PracticeSection connectors={connectors} locale={settings.locale} motion={settings.motion} />
       ) : (
         <main className="grid gap-6 lg:grid-cols-[minmax(320px,420px)_1fr]">
           <aside className="fade-card lg:sticky lg:top-6 lg:self-start">
@@ -249,7 +317,7 @@ export default function App() {
               motion={settings.motion}
               selection={selection}
               onChange={setSelection}
-              onClear={() => setSelection(createEmptySelection())}
+              onClear={handleClearFilters}
               eligibleConnectors={eligibleConnectors}
             />
           </aside>
@@ -263,7 +331,7 @@ export default function App() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => setSelection(createEmptySelection())}
+                  onClick={() => void handleClearFilters()}
                   className="pill-button self-start sm:self-auto"
                 >
                   {copy.clearFilters}

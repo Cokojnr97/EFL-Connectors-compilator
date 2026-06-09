@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Sora:wght@500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -15,9 +17,10 @@
 
   body {
     margin: 0;
-    font-family: 'Aptos', 'Trebuchet MS', 'Segoe UI', sans-serif;
-    background: #f8e9e4;
-    color: #4d232d;
+    font-family: 'Manrope', 'Aptos', 'Segoe UI', sans-serif;
+    letter-spacing: 0.01em;
+    background: radial-gradient(circle at 8% 10%, #3f2a62 0%, #20122f 28%, #120b1f 56%, #090612 100%);
+    color: #eee6ff;
   }
 
   button,
@@ -33,6 +36,7 @@
     color: var(--panel-text);
     position: relative;
     overflow: hidden;
+    isolation: isolate;
   }
 
   .app-shell::before,
@@ -42,42 +46,64 @@
     inset: auto;
     border-radius: 9999px;
     pointer-events: none;
-    filter: blur(48px);
-    opacity: 0.4;
+    filter: blur(72px);
+    opacity: 0.52;
+    z-index: -1;
   }
 
   .app-shell::before {
-    width: 20rem;
-    height: 20rem;
-    top: -6rem;
-    right: -4rem;
-    background: color-mix(in srgb, var(--accent) 28%, transparent);
+    width: 36rem;
+    height: 36rem;
+    top: -14rem;
+    right: -10rem;
+    background: color-mix(in srgb, var(--accent) 48%, transparent);
   }
 
   .app-shell::after {
-    width: 18rem;
-    height: 18rem;
-    bottom: -6rem;
-    left: -5rem;
-    background: color-mix(in srgb, var(--accent-soft) 60%, transparent);
+    width: 28rem;
+    height: 28rem;
+    bottom: -10rem;
+    left: -8rem;
+    background: color-mix(in srgb, #44c0ff 26%, transparent);
+  }
+
+  .app-shell .glass-panel {
+    position: relative;
+  }
+
+  .app-shell .glass-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid color-mix(in srgb, white 22%, transparent);
+    opacity: 0.45;
+    pointer-events: none;
   }
 
   .glass-panel {
-    background: var(--panel-bg);
-    border: 1px solid var(--panel-border);
-    box-shadow: var(--panel-shadow);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    background: linear-gradient(
+      155deg,
+      color-mix(in srgb, var(--panel-bg) 95%, #ffffff 5%) 0%,
+      color-mix(in srgb, var(--panel-bg) 82%, #0f0a1c 18%) 100%
+    );
+    border: 1px solid color-mix(in srgb, var(--panel-border) 70%, white 30%);
+    box-shadow:
+      0 28px 58px rgba(7, 5, 13, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
   }
 
   .fade-card {
-    animation: float-in 520ms ease both;
+    animation: float-in 500ms cubic-bezier(0.21, 0.83, 0.33, 1) both;
   }
 
   .eyebrow {
-    font-size: 0.72rem;
+    font-family: 'Sora', 'Manrope', sans-serif;
+    font-size: 0.68rem;
     font-weight: 700;
-    letter-spacing: 0.24em;
+    letter-spacing: 0.26em;
     text-transform: uppercase;
     color: var(--panel-muted);
   }
@@ -95,34 +121,40 @@
 
   .pill-button {
     border-radius: 9999px;
-    border: 1px solid var(--panel-border);
-    background: var(--panel-strong);
-    color: var(--panel-text);
-    padding: 0.65rem 1rem;
+    border: 1px solid color-mix(in srgb, var(--panel-border) 60%, #d4ccff 40%);
+    background: linear-gradient(140deg, color-mix(in srgb, var(--panel-strong) 86%, #ffffff 14%), color-mix(in srgb, var(--panel-strong) 75%, #130b22 25%));
+    color: color-mix(in srgb, var(--panel-text) 88%, #ffffff 12%);
+    padding: 0.68rem 1.05rem;
     font-size: 0.875rem;
-    font-weight: 600;
+    font-weight: 700;
+    box-shadow: 0 10px 18px rgba(13, 9, 24, 0.24);
   }
 
   .pill-button:hover,
   .chip-button:hover,
   .menu-field select:hover {
-    transform: translateY(-1px);
+    transform: translateY(-1px) scale(1.01);
+    box-shadow: 0 12px 26px color-mix(in srgb, var(--accent) 22%, transparent);
   }
 
   .chip-button {
     border-radius: 9999px;
-    border: 1px solid var(--panel-border);
-    background: color-mix(in srgb, var(--panel-strong) 88%, white);
-    padding: 0.5rem 0.8rem;
+    border: 1px solid color-mix(in srgb, var(--panel-border) 62%, white 38%);
+    background: color-mix(in srgb, var(--panel-strong) 82%, #141027 18%);
+    padding: 0.5rem 0.86rem;
     font-size: 0.8rem;
-    color: var(--panel-text);
+    color: color-mix(in srgb, var(--panel-text) 85%, #f8f5ff 15%);
   }
 
   .chip-button[data-active='true'] {
-    background: color-mix(in srgb, var(--accent-soft) 55%, var(--panel-strong));
+    background: linear-gradient(
+      140deg,
+      color-mix(in srgb, var(--accent-soft) 72%, #ffffff 28%),
+      color-mix(in srgb, var(--accent-soft) 60%, #170f2a 40%)
+    );
     border-color: color-mix(in srgb, var(--accent) 45%, var(--panel-border));
-    color: var(--accent);
-    box-shadow: 0 10px 25px color-mix(in srgb, var(--accent) 18%, transparent);
+    color: color-mix(in srgb, var(--accent) 75%, white 25%);
+    box-shadow: 0 12px 28px color-mix(in srgb, var(--accent) 24%, transparent);
   }
 
   .menu-field {
@@ -136,9 +168,9 @@
 
   .menu-field select {
     border-radius: 1rem;
-    border: 1px solid var(--panel-border);
-    background: var(--panel-strong);
-    color: var(--panel-text);
+    border: 1px solid color-mix(in srgb, var(--panel-border) 64%, #e6dcff 36%);
+    background: color-mix(in srgb, var(--panel-strong) 84%, #120b21 16%);
+    color: color-mix(in srgb, var(--panel-text) 84%, #ffffff 16%);
     padding: 0.8rem 0.95rem;
   }
 
@@ -146,12 +178,12 @@
     display: inline-flex;
     align-items: center;
     border-radius: 9999px;
-    border: 1px solid var(--panel-border);
-    background: color-mix(in srgb, var(--panel-strong) 90%, white);
+    border: 1px solid color-mix(in srgb, var(--panel-border) 60%, #e9dfff 40%);
+    background: color-mix(in srgb, var(--panel-strong) 82%, #1a1330 18%);
     padding: 0.45rem 0.75rem;
     font-size: 0.72rem;
     font-weight: 600;
-    color: var(--panel-muted);
+    color: color-mix(in srgb, var(--panel-muted) 70%, #f2ecff 30%);
   }
 
   .highlight-connector {
@@ -166,8 +198,8 @@
     border-radius: 0.35rem;
     padding: 0 0.16rem;
     font-weight: 800;
-    color: #d13c4b;
-    background: color-mix(in srgb, #ffd7de 65%, transparent);
+    color: #ffc0cc;
+    background: color-mix(in srgb, #6a2743 60%, transparent);
   }
 
   .highlight-support {
@@ -176,6 +208,50 @@
     font-weight: 700;
     color: color-mix(in srgb, var(--accent) 72%, #6d3051);
     background: color-mix(in srgb, var(--accent-soft) 30%, transparent);
+  }
+
+  .swal-glass-popup {
+    border-radius: 1.2rem;
+    border: 1px solid rgba(225, 208, 255, 0.28);
+    box-shadow: 0 24px 56px rgba(4, 2, 12, 0.52);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .swal-glass-title {
+    font-family: 'Sora', 'Manrope', sans-serif;
+    font-size: 1.08rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+
+  .swal-glass-text {
+    color: #e6d9ff;
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  .swal-glass-actions {
+    gap: 0.65rem;
+  }
+
+  .swal-glass-confirm,
+  .swal-glass-cancel {
+    border-radius: 999px;
+    padding: 0.6rem 1rem;
+    border: 1px solid transparent;
+    font-weight: 700;
+  }
+
+  .swal-glass-confirm {
+    background: linear-gradient(140deg, #a98bff 0%, #8a70ef 100%);
+    color: #1b1130;
+  }
+
+  .swal-glass-cancel {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(232, 216, 255, 0.32);
+    color: #f5eeff;
   }
 }
 

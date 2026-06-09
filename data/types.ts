@@ -10,7 +10,12 @@ export type Axis =
   | 'structure'
   | 'frequency'
   | 'rhetorical'
-  | 'origin';
+  | 'origin'
+  | 'opinion'
+  | 'sequence'
+  | 'comparison'
+  | 'summary'
+  | 'place';
 
 export interface CategoryOption {
   value: string;
@@ -36,6 +41,11 @@ export interface CategorySelection {
   frequency: string[];
   rhetorical: string[];
   origin: string[];
+  opinion: string[];
+  sequence: string[];
+  comparison: string[];
+  summary: string[];
+  place: string[];
 }
 
 export interface ExampleHighlight {
