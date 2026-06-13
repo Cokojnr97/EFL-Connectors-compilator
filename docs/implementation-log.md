@@ -16,9 +16,9 @@
 
 ## Iteration 3
 
-- Expanded the shared category model with opinion, sequence, comparison, summary, and place axes.
-- Added learn-view explanations for the new axes and wired the app/server selection state to match.
-- Added supplemental connector tagging plus new seed records for the newly introduced categories.
+- Recast opinion, sequence, comparison, summary, and place as nested Function subtopics instead of standalone top-level axes.
+- Added learn-view explanations for the nested Function subtopics and kept the app/server selection state aligned with the top-level category flow.
+- Updated supplemental connector tagging and practice labels so the nested Function subtopics still surface consistently in the UI.
 - Rebuilt the app and confirmed the live API now returns the expanded connector set.
 
 ## Iteration 4

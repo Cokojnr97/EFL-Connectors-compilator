@@ -1,4 +1,5 @@
 import { CONNECTORS } from '../../data/connectors.js';
+import { getFunctionCategoryLabel } from '../../data/categories.js';
 import type { ConnectorRecord, Locale } from '../../data/types.js';
 
 export type PracticeExerciseKind = 'connector' | 'punctuation';
@@ -100,7 +101,8 @@ function pickPunctuationOptions(answer: string, seedText: string) {
 
 function connectorFocus(connector: ConnectorRecord, locale: Locale) {
   const category = connector.categories.function[0] ?? 'connector';
-  return locale === 'en' ? `Function: ${category}` : `Función: ${category}`;
+  const label = getFunctionCategoryLabel(category, locale);
+  return locale === 'en' ? `Function: ${label}` : `Función: ${label}`;
 }
 
 function punctuationFocus(punctuation: string, locale: Locale) {
@@ -203,8 +205,8 @@ function buildParagraphVariants(connector: ConnectorRecord) {
           es: 'Elige el conector que mejor completa este párrafo.',
         },
         focus: {
-          en: `Paragraph link: ${functionCategory} · Register: ${register}`,
-          es: `Enlace de párrafo: ${functionCategory} · Registro: ${register}`,
+          en: `Paragraph link: ${getFunctionCategoryLabel(functionCategory, 'en')} · Register: ${register}`,
+          es: `Enlace de párrafo: ${getFunctionCategoryLabel(functionCategory, 'es')} · Registro: ${register}`,
         },
       };
     })

@@ -1,5 +1,5 @@
 import type { CategorySelection, Locale } from '../../data/types.js';
-import { CATEGORY_GROUPS, CATEGORY_SEQUENCE } from '../../data/categories.js';
+import { CATEGORY_GROUPS, CATEGORY_SEQUENCE, FUNCTION_SUBCATEGORY_SEQUENCE } from '../../data/categories.js';
 
 interface CategorySelectorProps {
   locale: Locale;
@@ -77,6 +77,24 @@ export default function CategorySelector({ locale, selection, eligibleConnectors
                       title={option.description[locale]}
                     >
                       <span className="font-medium">{option.label[locale]}</span>
+                    </button>
+                  );
+                })}
+                {axis === 'function' && FUNCTION_SUBCATEGORY_SEQUENCE.map((subAxis) => {
+                  const active = values.includes(subAxis);
+                  const subGroup = CATEGORY_GROUPS[subAxis];
+
+                  return (
+                    <button
+                      key={subAxis}
+                      type="button"
+                      aria-pressed={active}
+                      onClick={() => onChange(toggleSelection(selection, axis, subAxis))}
+                      className="chip-button"
+                      data-active={active}
+                      title={subGroup.hint[locale]}
+                    >
+                      <span className="font-medium">{subGroup.label[locale]}</span>
                     </button>
                   );
                 })}

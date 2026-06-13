@@ -1,4 +1,4 @@
-import type { Axis, CategoryGroup } from './types.js';
+import type { Axis, CategoryGroup, Locale } from './types.js';
 
 export const CATEGORY_SEQUENCE: Axis[] = [
   'function',
@@ -11,12 +11,29 @@ export const CATEGORY_SEQUENCE: Axis[] = [
   'frequency',
   'rhetorical',
   'origin',
+];
+
+export const FUNCTION_SUBCATEGORY_SEQUENCE: Axis[] = [
   'opinion',
   'sequence',
   'comparison',
   'summary',
   'place',
 ];
+
+export function getFunctionCategoryLabel(value: string, locale: Locale) {
+  const mainOption = CATEGORY_GROUPS.function.options.find((option) => option.value === value);
+  if (mainOption) {
+    return mainOption.label[locale];
+  }
+
+  const subcategoryGroup = CATEGORY_GROUPS[value as Axis];
+  if (subcategoryGroup) {
+    return subcategoryGroup.label[locale];
+  }
+
+  return value;
+}
 
 export const CATEGORY_GROUPS: Record<Axis, CategoryGroup> = {
   function: {

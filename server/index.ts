@@ -2,7 +2,7 @@ import express from 'express';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { createServer as createViteServer } from 'vite';
-import { CATEGORY_SEQUENCE } from '../data/categories.js';
+import { CATEGORY_SEQUENCE, FUNCTION_SUBCATEGORY_SEQUENCE } from '../data/categories.js';
 import { CONNECTORS } from '../data/connectors.js';
 import type { Axis, CategorySelection } from '../data/types.js';
 
@@ -29,6 +29,36 @@ function createEmptySelection(): CategorySelection {
     summary: [],
     place: [],
   };
+}
+
+const FILTER_SEQUENCE = [...CATEGORY_SEQUENCE, ...FUNCTION_SUBCATEGORY_SEQUENCE];
+
+function axisMatchesSelection(axis: keyof CategorySelection, selected: string[], categories: CategorySelection) {
+  if (selected.length === 0) {
+    return true;
+  }
+
+  const actual = categories[axis];
+
+  if (axis === 'function') {
+    return selected.some((value) => {
+      if (CATEGORY_SEQUENCE.includes(axis) && actual.includes(value)) {
+        return true;
+      }
+
+      if (FUNCTION_SUBCATEGORY_SEQUENCE.includes(value as keyof CategorySelection)) {
+        return categories[value as keyof CategorySelection].length > 0;
+      }
+
+      return actual.includes(value);
+    });
+  }
+
+  if (FUNCTION_SUBCATEGORY_SEQUENCE.includes(axis)) {
+    return selected.some((value) => value === axis || actual.includes(value));
+  }
+
+  return selected.some((value) => actual.includes(value));
 }
 
 function parseSelection(raw: unknown): Partial<CategorySelection> {
@@ -73,7 +103,7 @@ function parseLegacyTokenList(raw: string): Partial<CategorySelection> {
 function normalizeSelectionObject(raw: Record<string, unknown>): Partial<CategorySelection> {
   const selection: Partial<CategorySelection> = {};
 
-  for (const axis of CATEGORY_SEQUENCE) {
+  for (const axis of FILTER_SEQUENCE) {
     const value = raw[axis];
     const values = normalizeValue(value);
     if (values.length > 0) {
@@ -106,7 +136,7 @@ function mergeToken(selection: Partial<CategorySelection>, token: string): Parti
   }
 
   const axis = axisPart as Axis;
-  if (!CATEGORY_SEQUENCE.includes(axis)) {
+  if (!FILTER_SEQUENCE.includes(axis)) {
     return selection;
   }
 
@@ -125,14 +155,9 @@ function mergeToken(selection: Partial<CategorySelection>, token: string): Parti
 }
 
 function matchesSelection(selection: Partial<CategorySelection>, categories: CategorySelection): boolean {
-  return CATEGORY_SEQUENCE.every((axis) => {
+  return FILTER_SEQUENCE.every((axis) => {
     const expected = selection[axis];
-    if (!expected || expected.length === 0) {
-      return true;
-    }
-
-    const actual = categories[axis];
-    return expected.some((value) => actual.includes(value));
+    return axisMatchesSelection(axis, expected ?? [], categories);
   });
 }
 

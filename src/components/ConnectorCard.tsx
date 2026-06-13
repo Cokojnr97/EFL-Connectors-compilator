@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { ConnectorExample, ConnectorRecord, Locale } from '../../data/types.js';
-import { CATEGORY_GROUPS, CATEGORY_SEQUENCE } from '../../data/categories.js';
+import { CATEGORY_GROUPS, CATEGORY_SEQUENCE, FUNCTION_SUBCATEGORY_SEQUENCE, getFunctionCategoryLabel } from '../../data/categories.js';
 import { renderHighlightedText } from '../lib/highlight';
 
 interface ConnectorCardProps {
@@ -12,7 +12,13 @@ interface ConnectorCardProps {
 
 function formatCategory(axis: keyof ConnectorRecord['categories'], values: string[], locale: Locale): string {
   const group = CATEGORY_GROUPS[axis];
-  const labels = values.map((value) => group.options.find((option) => option.value === value)?.label[locale] ?? value);
+  const labels = values.map((value) => {
+    if (axis === 'function') {
+      return getFunctionCategoryLabel(value, locale);
+    }
+
+    return group.options.find((option) => option.value === value)?.label[locale] ?? value;
+  });
   return `${group.label[locale]}: ${labels.join(', ')}`;
 }
 
@@ -242,6 +248,26 @@ export default function ConnectorCard({ connector, locale, motion, index }: Conn
                     {formatCategory(axis, connector.categories[axis], locale)}
                   </span>
                 ))}
+              </div>
+
+              <div className="mt-4">
+                <div className="text-xs font-semibold uppercase tracking-wide text-[color:var(--panel-muted)]">
+                  {locale === 'en' ? 'Function subcategories' : 'Subcategorías de función'}
+                </div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {FUNCTION_SUBCATEGORY_SEQUENCE.map((axis) => {
+                    const values = connector.categories[axis];
+                    if (values.length === 0) {
+                      return null;
+                    }
+
+                    return (
+                      <span key={axis} className="tag-chip">
+                        {formatCategory(axis, values, locale)}
+                      </span>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           )}

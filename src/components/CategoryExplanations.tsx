@@ -1,5 +1,5 @@
 import type { Locale } from '../../data/types.js';
-import { CATEGORY_GROUPS, CATEGORY_SEQUENCE } from '../../data/categories.js';
+import { CATEGORY_GROUPS, CATEGORY_SEQUENCE, FUNCTION_SUBCATEGORY_SEQUENCE } from '../../data/categories.js';
 import { getExplanation, getSubcategoryHtml } from '../lib/categoryExplanations';
 
 interface CategoryExplanationsProps {
@@ -42,6 +42,63 @@ export default function CategoryExplanations({ locale, motion }: CategoryExplana
                   className="mt-2 text-sm leading-6 text-[color:var(--panel-text)]"
                   dangerouslySetInnerHTML={{ __html: html }}
                 />
+
+                {axis === 'function' && (
+                  <div className="mt-4">
+                    <div className="text-xs font-semibold uppercase tracking-wide text-[color:var(--panel-muted)]">
+                      Function subcategories
+                    </div>
+                    <div className="mt-2 space-y-2">
+                      {FUNCTION_SUBCATEGORY_SEQUENCE.map((subAxis) => {
+                        const subGroup = CATEGORY_GROUPS[subAxis];
+                        const subHtml = getExplanation(subAxis, locale);
+
+                        return (
+                          <details
+                            key={subAxis}
+                            open={subAxis === 'opinion'}
+                            className="rounded-lg border border-[color:var(--panel-border)] bg-[color:var(--panel-strong)] p-3"
+                          >
+                            <summary className="cursor-pointer font-medium flex items-center justify-between">
+                              <span>{`Function: ${subGroup.label[locale]}`}</span>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                                <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6l6 6-6 6-1.41-1.41z" fill="currentColor" />
+                              </svg>
+                            </summary>
+                            <div
+                              className="mt-2 text-sm leading-6 text-[color:var(--panel-text)]"
+                              dangerouslySetInnerHTML={{ __html: subHtml }}
+                            />
+                            <div className="mt-3 space-y-2">
+                              {subGroup.options.map((option, idx) => {
+                                const label = option.label?.en ?? option.label?.[locale] ?? option.value;
+                                const subOptionHtml = getSubcategoryHtml(subAxis, option.value, label);
+                                return (
+                                  <details
+                                    key={option.value}
+                                    open={idx === 0}
+                                    className="rounded-md border border-[color:var(--panel-border)] bg-[color:var(--panel-bg)] p-3"
+                                  >
+                                    <summary className="cursor-pointer font-medium flex items-center justify-between">
+                                      <span>{`${subGroup.label[locale]}: ${label}`}</span>
+                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                                        <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6l6 6-6 6-1.41-1.41z" fill="currentColor" />
+                                      </svg>
+                                    </summary>
+                                    <div
+                                      className="mt-2 text-sm leading-6 text-[color:var(--panel-text)]"
+                                      dangerouslySetInnerHTML={{ __html: subOptionHtml }}
+                                    />
+                                  </details>
+                                );
+                              })}
+                            </div>
+                          </details>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
               <div className="mt-4">
                 <div className="text-xs font-semibold uppercase tracking-wide text-[color:var(--panel-muted)]">

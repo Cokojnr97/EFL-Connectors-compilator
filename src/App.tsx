@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { CATEGORY_GROUPS, CATEGORY_SEQUENCE } from '../data/categories.js';
+import { CATEGORY_GROUPS, CATEGORY_SEQUENCE, FUNCTION_SUBCATEGORY_SEQUENCE, getFunctionCategoryLabel } from '../data/categories.js';
 import { CONNECTORS } from '../data/connectors.js';
 import type { CategorySelection, ConnectorRecord, Locale } from '../data/types.js';
 import CategorySelector from './components/CategorySelector';
@@ -156,6 +156,36 @@ function createEmptySelection(): CategorySelection {
   };
 }
 
+const FILTER_SEQUENCE = [...CATEGORY_SEQUENCE, ...FUNCTION_SUBCATEGORY_SEQUENCE];
+
+function axisMatchesSelection(axis: keyof CategorySelection, selected: string[], categories: CategorySelection) {
+  if (selected.length === 0) {
+    return true;
+  }
+
+  const actual = categories[axis];
+
+  if (axis === 'function') {
+    return selected.some((value) => {
+      if (CATEGORY_GROUPS.function.options.some((option) => option.value === value)) {
+        return actual.includes(value);
+      }
+
+      if (FUNCTION_SUBCATEGORY_SEQUENCE.includes(value as keyof CategorySelection)) {
+        return categories[value as keyof CategorySelection].length > 0;
+      }
+
+      return actual.includes(value);
+    });
+  }
+
+  if (FUNCTION_SUBCATEGORY_SEQUENCE.includes(axis)) {
+    return selected.some((value) => value === axis || actual.includes(value));
+  }
+
+  return selected.some((value) => actual.includes(value));
+}
+
 function buildFilterQuery(selection: CategorySelection): string {
   const payload = Object.fromEntries(Object.entries(selection).filter(([, values]) => values.length > 0));
   return encodeURIComponent(JSON.stringify(payload));
@@ -178,12 +208,9 @@ function getThemeVars(theme: ThemeMode, tone: TonePreset): CSSProperties {
 
 function countEligibleConnectors(selection: CategorySelection): number {
   return CONNECTORS.filter((connector) => {
-    return CATEGORY_SEQUENCE.every((axis) => {
+    return FILTER_SEQUENCE.every((axis) => {
       const selected = selection[axis];
-      if (selected.length === 0) {
-        return true;
-      }
-      return selected.some((value) => connector.categories[axis].includes(value));
+      return axisMatchesSelection(axis, selected, connector.categories);
     });
   }).length;
 }
@@ -204,13 +231,9 @@ export default function App() {
   useEffect(() => {
     const controller = new AbortController();
     const fallbackConnectors = CONNECTORS.filter((connector) => {
-      return CATEGORY_SEQUENCE.every((axis) => {
+      return FILTER_SEQUENCE.every((axis) => {
         const selected = selection[axis];
-        if (selected.length === 0) {
-          return true;
-        }
-
-        return selected.some((value) => connector.categories[axis].includes(value));
+        return axisMatchesSelection(axis, selected, connector.categories);
       });
     });
 
@@ -344,6 +367,10 @@ export default function App() {
                     return null;
                   }
                   const labels = values.map((value) => {
+                    if (axis === 'function') {
+                      return getFunctionCategoryLabel(value, settings.locale);
+                    }
+
                     const option = CATEGORY_GROUPS[axis].options.find((item) => item.value === value);
                     return option?.label[settings.locale] ?? value;
                   });
@@ -354,6 +381,17 @@ export default function App() {
                     </span>
                   );
                 })}
+                {FUNCTION_SUBCATEGORY_SEQUENCE.some((axis) => selection[axis].length > 0) && (
+                  <span className="mr-3 inline-flex items-center gap-2 rounded-full border border-[color:var(--panel-border)] bg-[color:var(--panel-strong)] px-3 py-1 text-xs font-medium text-[color:var(--panel-text)]">
+                    <span>{CATEGORY_GROUPS.function.label[settings.locale]}:</span>
+                    <span className="opacity-80">
+                      {FUNCTION_SUBCATEGORY_SEQUENCE.flatMap((axis) => {
+                        const values = selection[axis];
+                        return values.map((value) => getFunctionCategoryLabel(value, settings.locale));
+                      }).join(', ')}
+                    </span>
+                  </span>
+                )}
               </div>
             </div>
 

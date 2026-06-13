@@ -5,7 +5,7 @@ A responsive learning app for categorizing English connectors with a React + Tai
 ## What it does
 
 - Filters connectors by multiple category axes.
-- Includes teaching axes for function, grammar, punctuation, CEFR, register, position, structure, frequency, rhetorical function, origin, opinion, sequence, comparison, summary, and place.
+- Includes teaching axes for function, grammar, punctuation, CEFR, register, position, structure, frequency, rhetorical function, and origin, plus nested Function subtopics for opinion, sequence, comparison, summary, and place.
 - Switches between Learn, Practice, and Explore views from the main header.
 - Explains why each connector belongs to the selected categories.
 - Shows at least four example sentences per connector.
